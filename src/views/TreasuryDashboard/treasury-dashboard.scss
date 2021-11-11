@@ -19,7 +19,6 @@
     max-width: unset !important;
     width: 100%;
     margin: auto;
-    max-height: 355px;
     .card-header {
       margin-bottom: 1rem;
     }
@@ -28,7 +27,6 @@
         padding: 0px 20px !important;
         min-width: 300px;
       }
-      height: 355px;
     }
   }
   .hero-metrics {
@@ -84,11 +82,16 @@
     &.wsoprice,
     &.circ,
     &.bpo,
-    &.index {
+    &.index,
+    &.runway {
       flex-direction: column;
       align-items: flex-start;
     }
   }
+}
+
+.app:not(.mobile) .runway {
+  margin: 0 auto !important;
 }
 
 .very-small {

@@ -19,11 +19,11 @@ import InfoTooltip from "src/components/InfoTooltip/InfoTooltip.jsx";
 import { allBondsMap } from "src/helpers/AllBonds";
 
 function TreasuryDashboard() {
-  const [data, setData] = useState(null);
-  const [apy, setApy] = useState(null);
-  const [runway, setRunway] = useState(null);
-  const [staked, setStaked] = useState(null);
-  const theme = useTheme();
+  // const [data, setData] = useState(null);
+  // const [apy, setApy] = useState(null);
+  // const [runway, setRunway] = useState(null);
+  // const [staked, setStaked] = useState(null);
+  // const theme = useTheme();
   const smallerScreen = useMediaQuery("(max-width: 650px)");
   const verySmallScreen = useMediaQuery("(max-width: 379px)");
 
@@ -39,9 +39,11 @@ function TreasuryDashboard() {
   const marketCap = useSelector(state => {
     return state.app.marketCap;
   });
-
   const currentIndex = useSelector(state => {
     return state.app.currentIndex;
+  });
+  const runwayValue = useSelector(state => {
+    return state.app.runway;
   });
 
   // const backingPerOhm = useSelector(state => {
@@ -63,36 +65,36 @@ function TreasuryDashboard() {
     return state.app.marketPrice * state.app.currentIndex;
   });
 
-  useEffect(() => {
-    apollo(treasuryDataQuery).then(r => {
-      let metrics = r.data.protocolMetrics.map(entry =>
-        Object.entries(entry).reduce((obj, [key, value]) => ((obj[key] = parseFloat(value)), obj), {}),
-      );
-      metrics = metrics.filter(pm => pm.treasuryMarketValue > 0);
-      setData(metrics);
-
-      let staked = r.data.protocolMetrics.map(entry => ({
-        staked: (parseFloat(entry.sOhmCirculatingSupply) / parseFloat(entry.ohmCirculatingSupply)) * 100,
-        timestamp: entry.timestamp,
-      }));
-      staked = staked.filter(pm => pm.staked < 100);
-      setStaked(staked);
-
-      let runway = metrics.filter(pm => pm.runway10k > 5);
-      setRunway(runway);
-    });
-
-    apollo(rebasesDataQuery).then(r => {
-      let apy = r.data.rebases.map(entry => ({
-        apy: Math.pow(parseFloat(entry.percentage) + 1, 365 * 3) * 100,
-        timestamp: entry.timestamp,
-      }));
-
-      apy = apy.filter(pm => pm.apy < 300000);
-
-      setApy(apy);
-    });
-  }, []);
+  // useEffect(() => {
+  //   apollo(treasuryDataQuery).then(r => {
+  //     let metrics = r.data.protocolMetrics.map(entry =>
+  //       Object.entries(entry).reduce((obj, [key, value]) => ((obj[key] = parseFloat(value)), obj), {}),
+  //     );
+  //     metrics = metrics.filter(pm => pm.treasuryMarketValue > 0);
+  //     setData(metrics);
+  //
+  //     let staked = r.data.protocolMetrics.map(entry => ({
+  //       staked: (parseFloat(entry.sOhmCirculatingSupply) / parseFloat(entry.ohmCirculatingSupply)) * 100,
+  //       timestamp: entry.timestamp,
+  //     }));
+  //     staked = staked.filter(pm => pm.staked < 100);
+  //     setStaked(staked);
+  //
+  //     let runway = metrics.filter(pm => pm.runway10k > 5);
+  //     setRunway(runway);
+  //   });
+  //
+  //   apollo(rebasesDataQuery).then(r => {
+  //     let apy = r.data.rebases.map(entry => ({
+  //       apy: Math.pow(parseFloat(entry.percentage) + 1, 365 * 3) * 100,
+  //       timestamp: entry.timestamp,
+  //     }));
+  //
+  //     apy = apy.filter(pm => pm.apy < 300000);
+  //
+  //     setApy(apy);
+  //   });
+  // }, []);
 
   return (
     <div id="treasury-dashboard-view" className={`${smallerScreen && "smaller"} ${verySmallScreen && "very-small"}`}>
@@ -173,6 +175,20 @@ function TreasuryDashboard() {
                 </Typography>
                 <Typography variant="h5">
                   {currentIndex ? trim(currentIndex, 2) + " sHEC" : <Skeleton type="text" />}
+                </Typography>
+              </Box>
+
+              <Box className="metric runway">
+                <Typography variant="h6" color="textSecondary">
+                  Runway
+                  <InfoTooltip
+                    message={
+                      "Runway, is the number of days sHEC emissions can be sustained at a given rate. Lower APY = longer runway"
+                    }
+                  />
+                </Typography>
+                <Typography variant="h5">
+                  {runwayValue ? trim(runwayValue, 0) + " days" : <Skeleton type="text" />}
                 </Typography>
               </Box>
             </Box>
