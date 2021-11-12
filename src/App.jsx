@@ -169,7 +169,7 @@ function App() {
   useEffect(() => {
     // don't load ANY details until wallet is Checked
     if (walletChecked) {
-      loadDetails("account");
+      loadDetails("app");
     }
   }, [walletChecked]);
 
@@ -177,7 +177,7 @@ function App() {
   useEffect(() => {
     // don't load ANY details until wallet is Connected
     if (connected) {
-      loadDetails("app");
+      loadDetails("account");
     }
   }, [connected]);
 
