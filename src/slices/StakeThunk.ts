@@ -5,7 +5,7 @@ import { abi as OlympusStaking } from "../abi/OlympusStakingv2.json";
 import { abi as StakingHelper } from "../abi/StakingHelper.json";
 import { clearPendingTxn, fetchPendingTxns, getStakingTypeText } from "./PendingTxnsSlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchAccountSuccess, getBalances } from "./AccountSlice";
+import { fetchAccountSuccess, loadAccountDetails } from "./AccountSlice";
 import { error, info } from "../slices/MessagesSlice";
 import { IActionValueAsyncThunk, IChangeApprovalAsyncThunk, IJsonRPCError } from "./interfaces";
 import { segmentUA } from "../helpers/userAnalyticHelpers";
@@ -109,7 +109,7 @@ export const changeApproval = createAsyncThunk(
 
 export const changeStake = createAsyncThunk(
   "stake/changeStake",
-  async ({ action, value, provider, address, networkID }: IActionValueAsyncThunk, { dispatch }) => {
+  async ({ action, value, provider, address, networkID, callback }: IActionValueAsyncThunk, { dispatch }) => {
     if (!provider) {
       dispatch(error("Please connect your wallet!"));
       return;
@@ -143,7 +143,18 @@ export const changeStake = createAsyncThunk(
       const pendingTxnType = action === "stake" ? "staking" : "unstaking";
       uaData.txHash = stakeTx.hash;
       dispatch(fetchPendingTxns({ txnHash: stakeTx.hash, text: getStakingTypeText(action), type: pendingTxnType }));
+      callback?.();
       await stakeTx.wait();
+      await new Promise<void>((resolve, reject) => {
+        setTimeout(async () => {
+          try {
+            await dispatch(loadAccountDetails({ networkID, address, provider }));
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        }, 5000);
+      });
     } catch (e: unknown) {
       uaData.approved = false;
       const rpcError = e as IJsonRPCError;
@@ -162,6 +173,5 @@ export const changeStake = createAsyncThunk(
         dispatch(clearPendingTxn(stakeTx.hash));
       }
     }
-    dispatch(getBalances({ address, networkID, provider }));
   },
 );
