@@ -1,6 +1,6 @@
 import { ethers, BigNumber } from "ethers";
 import { contractForRedeemHelper } from "../helpers";
-import { getBalances, calculateUserBondDetails } from "./AccountSlice";
+import { getBalances, calculateUserBondDetails, loadAccountDetails } from "./AccountSlice";
 import { findOrLoadMarketPrice } from "./AppSlice";
 import { error, info } from "./MessagesSlice";
 import { clearPendingTxn, fetchPendingTxns } from "./PendingTxnsSlice";
@@ -212,8 +212,7 @@ export const bondAsset = createAsyncThunk(
       await bondTx.wait();
       // TODO: it may make more sense to only have it in the finally.
       // UX preference (show pending after txn complete or after balance updated)
-
-      dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
+      await dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
     } catch (e: unknown) {
       const rpcError = e as IJsonRPCError;
       if (rpcError.code === -32603 && rpcError.message.indexOf("ds-math-sub-underflow") >= 0) {
@@ -225,7 +224,6 @@ export const bondAsset = createAsyncThunk(
       if (bondTx) {
         // segmentUA(uaData);
         dispatch(clearPendingTxn(bondTx.hash));
-        dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
       }
     }
   },
@@ -261,8 +259,6 @@ export const redeemBond = createAsyncThunk(
 
       await redeemTx.wait();
       await dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
-
-      dispatch(getBalances({ address, networkID, provider }));
     } catch (e: unknown) {
       uaData.approved = false;
       dispatch(error((e as IJsonRPCError).message));
@@ -270,6 +266,7 @@ export const redeemBond = createAsyncThunk(
       if (redeemTx) {
         // segmentUA(uaData);
         dispatch(clearPendingTxn(redeemTx.hash));
+        dispatch(loadAccountDetails({ networkID, address, provider }));
       }
     }
   },
@@ -298,17 +295,15 @@ export const redeemAllBonds = createAsyncThunk(
 
       await redeemAllTx.wait();
 
-      bonds &&
-        bonds.forEach(async bond => {
-          dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
-        });
-
-      dispatch(getBalances({ address, networkID, provider }));
+      await Promise.all(
+        bonds && bonds.map(bond => dispatch(calculateUserBondDetails({ address, bond, networkID, provider }))),
+      );
     } catch (e: unknown) {
       dispatch(error((e as IJsonRPCError).message));
     } finally {
       if (redeemAllTx) {
         dispatch(clearPendingTxn(redeemAllTx.hash));
+        dispatch(loadAccountDetails({ networkID, address, provider }));
       }
     }
   },

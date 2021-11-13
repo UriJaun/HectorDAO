@@ -15,38 +15,39 @@ import { calcRunway } from "../helpers/Runway";
 const initialState = {
   loading: false,
   loadingMarketPrice: false,
+  loadingRunway: false,
 };
 
 export const loadAppDetails = createAsyncThunk("app/loadAppDetails", async (thunk: IBaseAsyncThunk, { dispatch }) => {
   const { networkID, provider } = thunk;
-  const protocolMetricsQuery = `
-  query {
-    _meta {
-      block {
-        number
-      }
-    }
-    protocolMetrics(first: 1, orderBy: timestamp, orderDirection: desc) {
-      timestamp
-      ohmCirculatingSupply
-      sOhmCirculatingSupply
-      totalSupply
-      ohmPrice
-      marketCap
-      totalValueLocked
-      treasuryMarketValue
-      nextEpochRebase
-      nextDistributedOhm
-    }
-  }
-`;
-
-  const graphData = await apollo(protocolMetricsQuery);
-
-  if (!graphData || graphData == null) {
-    console.error("Returned a null response when querying TheGraph");
-    return;
-  }
+  // const protocolMetricsQuery = `
+  // query {
+  //   _meta {
+  //     block {
+  //       number
+  //     }
+  //   }
+  //   protocolMetrics(first: 1, orderBy: timestamp, orderDirection: desc) {
+  //     timestamp
+  //     ohmCirculatingSupply
+  //     sOhmCirculatingSupply
+  //     totalSupply
+  //     ohmPrice
+  //     marketCap
+  //     totalValueLocked
+  //     treasuryMarketValue
+  //     nextEpochRebase
+  //     nextDistributedOhm
+  //   }
+  // }
+  // `;
+  //
+  // const graphData = await apollo(protocolMetricsQuery);
+  //
+  // if (!graphData) {
+  //   console.error("Returned a null response when querying TheGraph");
+  //   return;
+  // }
 
   const stakingContract = new ethers.Contract(
     addresses[networkID].STAKING_ADDRESS as string,
@@ -75,7 +76,7 @@ export const loadAppDetails = createAsyncThunk("app/loadAppDetails", async (thun
   const total = await ohmContract.totalSupply();
   const totalSupply = total / 1000000000;
   const marketCap = marketPrice * totalSupply;
-  const treasuryMarketValue = parseFloat(graphData.data.protocolMetrics[0].treasuryMarketValue);
+  // const treasuryMarketValue = parseFloat(graphData.data.protocolMetrics[0].treasuryMarketValue);
   // const currentBlock = parseFloat(graphData.data._meta.block.number);
   if (!provider) {
     console.error("failed to connect to provider, please connect your wallet");
@@ -85,7 +86,7 @@ export const loadAppDetails = createAsyncThunk("app/loadAppDetails", async (thun
       marketCap,
       circSupply,
       totalSupply,
-      treasuryMarketValue,
+      // treasuryMarketValue,
     };
   }
   const currentBlock = await provider.getBlockNumber();
@@ -102,7 +103,6 @@ export const loadAppDetails = createAsyncThunk("app/loadAppDetails", async (thun
   const endBlock = epoch.endBlock;
 
   return {
-    runway: await calcRunway(circSupply, thunk),
     currentIndex: ethers.utils.formatUnits(currentIndex, "gwei"),
     currentBlock,
     fiveDayRate,
@@ -113,9 +113,23 @@ export const loadAppDetails = createAsyncThunk("app/loadAppDetails", async (thun
     marketPrice,
     circSupply,
     totalSupply,
-    treasuryMarketValue,
+    // treasuryMarketValue,
     endBlock,
   } as IAppData;
+});
+
+export const loadRunway = createAsyncThunk("app/loadRunway", async (thunk: IBaseAsyncThunk, { getState }) => {
+  const { networkID, provider } = thunk;
+  const state: any = getState();
+  let circSupply;
+  if (state.app.circSupply) {
+    circSupply = state.app.circSupply;
+  } else {
+    const sohmMainContract = new ethers.Contract(addresses[networkID].SOHM_ADDRESS as string, sOHMv2, provider);
+    const circ = await sohmMainContract.circulatingSupply();
+    circSupply = circ / 1000000000;
+  }
+  return { runway: await calcRunway(circSupply, thunk) };
 });
 
 /**
@@ -219,6 +233,17 @@ const appSlice = createSlice({
       })
       .addCase(loadMarketPrice.rejected, (state, { error }) => {
         state.loadingMarketPrice = false;
+        console.error(error.name, error.message, error.stack);
+      })
+      .addCase(loadRunway.pending, (state, action) => {
+        state.loadingRunway = true;
+      })
+      .addCase(loadRunway.fulfilled, (state, action) => {
+        setAll(state, action.payload);
+        state.loadingRunway = false;
+      })
+      .addCase(loadRunway.rejected, (state, { error }) => {
+        state.loadingRunway = false;
         console.error(error.name, error.message, error.stack);
       });
   },

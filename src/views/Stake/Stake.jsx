@@ -117,7 +117,16 @@ function Stake() {
     if (action === "unstake" && gweiValue.gt(ethers.utils.parseUnits(sohmBalance, "gwei"))) {
       return dispatch(error("You cannot unstake more than your sHEC balance."));
     }
-    await dispatch(changeStake({ address, action, value: quantity.toString(), provider, networkID: chainID }));
+    await dispatch(
+      changeStake({
+        address,
+        action,
+        value: quantity.toString(),
+        provider,
+        networkID: chainID,
+        callback: () => setQuantity(""),
+      }),
+    );
   };
 
   const hasAllowance = useCallback(
