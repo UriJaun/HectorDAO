@@ -14,7 +14,7 @@ import { storeQueryParameters } from "./helpers/QueryParameterHelper";
 import { shouldTriggerSafetyCheck } from "./helpers";
 
 import { calcBondDetails } from "./slices/BondSlice";
-import { loadAppDetails, loadRunway } from "./slices/AppSlice";
+import { loadAppDetails } from "./slices/AppSlice";
 import { loadAccountDetails, calculateUserBondDetails } from "./slices/AccountSlice";
 import { info } from "./slices/MessagesSlice";
 
@@ -117,7 +117,6 @@ function App() {
   const loadApp = useCallback(
     loadProvider => {
       dispatch(loadAppDetails({ networkID: chainID, provider: loadProvider }));
-      dispatch(loadRunway({ networkID: chainID, provider: loadProvider }));
       bonds.map(bond => {
         dispatch(calcBondDetails({ bond, value: null, provider: loadProvider, networkID: chainID }));
       });
@@ -207,12 +206,8 @@ function App() {
           dispatch(calcBondDetails({ bond, value: null, provider, networkID: chainID }));
         });
       }, 1000 * 60);
-      const updateRunwayInterval = setInterval(() => {
-        dispatch(loadRunway({ networkID: chainID, provider }));
-      }, 1000 * 60 * 10);
       return () => {
         clearInterval(updateAppDetailsInterval);
-        clearInterval(updateRunwayInterval);
       };
     }
   }, [connected]);
@@ -220,7 +215,7 @@ function App() {
   useEffect(() => {
     if (walletChecked) {
       const updateAccountDetailInterval = setInterval(() => {
-        dispatch(loadAccountDetails({ networkID: chainID, address, provider: loadProvider }));
+        dispatch(loadAccountDetails({ networkID: chainID, address, provider }));
         bonds.map(bond => {
           dispatch(calculateUserBondDetails({ address, bond, provider, networkID: chainID }));
         });

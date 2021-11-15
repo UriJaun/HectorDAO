@@ -42,13 +42,9 @@ function TreasuryDashboard() {
   const currentIndex = useSelector(state => {
     return state.app.currentIndex;
   });
-  const runwayValue = useSelector(state => {
-    return state.app.runway;
+  const rebase = useSelector(state => {
+    return state.app.stakingRebase;
   });
-
-  // const backingPerOhm = useSelector(state => {
-  //   return state.app.treasuryMarketValue / state.app.circSupply;
-  // });
   const backingPerOhm = useSelector(state => {
     if (state.bonding.loading == false) {
       let tokenBalances = 0;
@@ -60,6 +56,8 @@ function TreasuryDashboard() {
       return tokenBalances / state.app.circSupply;
     }
   });
+
+  const runwayValue = Math.log(backingPerOhm) / Math.log(1 + rebase) / 3;
 
   const wsOhmPrice = useSelector(state => {
     return state.app.marketPrice * state.app.currentIndex;

@@ -10,12 +10,10 @@ import apollo from "../lib/apolloClient.js";
 import { createSlice, createSelector, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "src/store";
 import { IBaseAsyncThunk } from "./interfaces";
-import { calcRunway } from "../helpers/Runway";
 
 const initialState = {
   loading: false,
   loadingMarketPrice: false,
-  loadingRunway: false,
 };
 
 export const loadAppDetails = createAsyncThunk("app/loadAppDetails", async (thunk: IBaseAsyncThunk, { dispatch }) => {
@@ -116,20 +114,6 @@ export const loadAppDetails = createAsyncThunk("app/loadAppDetails", async (thun
     // treasuryMarketValue,
     endBlock,
   } as IAppData;
-});
-
-export const loadRunway = createAsyncThunk("app/loadRunway", async (thunk: IBaseAsyncThunk, { getState }) => {
-  const { networkID, provider } = thunk;
-  const state: any = getState();
-  let circSupply;
-  if (state.app.circSupply) {
-    circSupply = state.app.circSupply;
-  } else {
-    const sohmMainContract = new ethers.Contract(addresses[networkID].SOHM_ADDRESS as string, sOHMv2, provider);
-    const circ = await sohmMainContract.circulatingSupply();
-    circSupply = circ / 1000000000;
-  }
-  return { runway: await calcRunway(circSupply, thunk) };
 });
 
 /**
@@ -233,17 +217,6 @@ const appSlice = createSlice({
       })
       .addCase(loadMarketPrice.rejected, (state, { error }) => {
         state.loadingMarketPrice = false;
-        console.error(error.name, error.message, error.stack);
-      })
-      .addCase(loadRunway.pending, (state, action) => {
-        state.loadingRunway = true;
-      })
-      .addCase(loadRunway.fulfilled, (state, action) => {
-        setAll(state, action.payload);
-        state.loadingRunway = false;
-      })
-      .addCase(loadRunway.rejected, (state, { error }) => {
-        state.loadingRunway = false;
         console.error(error.name, error.message, error.stack);
       });
   },
