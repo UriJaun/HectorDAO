@@ -79,20 +79,30 @@ function TreasuryDashboard() {
       staked = staked.filter(pm => pm.staked < 100);
       setStaked(staked);
 
-      let runway = metrics.filter(pm => pm.runway10k > 5);
+      let runway = metrics.filter(pm => pm.runwayCurrent > 5);
       setRunway(runway);
     });
 
     apollo(rebasesV1DataQuery).then(r => {
       let apy = r.data.rebases.map(entry => ({
         apy: Math.pow(parseFloat(entry.percentage) + 1, 365 * 3) * 100,
-        timestamp: entry.timestamp,
+        timestamp: entry.timestamp - (entry.timestamp % (3600 * 4)),
       }));
 
       apy = apy.filter(pm => pm.apy < 5000000);
 
       setApy(apy);
     });
+    // apollo(rebasesV2DataQuery).then(r => {
+    //   let apy = r.data.rebases.map(entry => ({
+    //     apy: Math.pow(parseFloat(entry.percentage) + 1, 365 * 3) * 100,
+    //     timestamp: entry.timestamp - (entry.timestamp % (3600 * 4)),
+    //   }));
+    //
+    //   apy = apy.filter(pm => pm.apy < 5000000);
+    //
+    //   setApy(apy);
+    // });
   }, []);
 
   return (
