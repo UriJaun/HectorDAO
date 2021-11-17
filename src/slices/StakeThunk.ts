@@ -5,7 +5,11 @@ import { abi as OlympusStaking } from "../abi/OlympusStakingv2.json";
 import { abi as StakingHelper } from "../abi/StakingHelper.json";
 import { clearPendingTxn, fetchPendingTxns, getStakingTypeText } from "./PendingTxnsSlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
+<<<<<<< HEAD
+import { fetchAccountSuccess, getBalances, loadAccountDetails } from "./AccountSlice";
+=======
 import { fetchAccountSuccess, loadAccountDetails } from "./AccountSlice";
+>>>>>>> e2fbbe930e2b9db76df6f869c9a788e207c025d1
 import { error, info } from "../slices/MessagesSlice";
 import { IActionValueAsyncThunk, IChangeApprovalAsyncThunk, IJsonRPCError } from "./interfaces";
 import { segmentUA } from "../helpers/userAnalyticHelpers";
@@ -45,11 +49,13 @@ export const changeApproval = createAsyncThunk(
     }
 
     const signer = provider.getSigner();
-    const ohmContract = new ethers.Contract(addresses[networkID].OHM_ADDRESS as string, ierc20Abi, signer);
-    const sohmContract = new ethers.Contract(addresses[networkID].SOHM_ADDRESS as string, ierc20Abi, signer);
+    const ohmContract = new ethers.Contract(addresses[networkID].HEC_ADDRESS as string, ierc20Abi, signer);
+    const sohmContract = new ethers.Contract(addresses[networkID].SHEC_ADDRESS as string, ierc20Abi, signer);
+    const oldshecContract = new ethers.Contract(addresses[networkID].OLD_SHEC_ADDRESS as string, ierc20Abi, signer);
     let approveTx;
     let stakeAllowance = await ohmContract.allowance(address, addresses[networkID].STAKING_HELPER_ADDRESS);
     let unstakeAllowance = await sohmContract.allowance(address, addresses[networkID].STAKING_ADDRESS);
+    let oldunstakeAllowance = await oldshecContract.allowance(address, addresses[networkID].OLD_STAKING_ADDRESS);
 
     // return early if approval has already happened
     if (alreadyApprovedToken(token, stakeAllowance, unstakeAllowance)) {
@@ -59,6 +65,7 @@ export const changeApproval = createAsyncThunk(
           staking: {
             ohmStake: +stakeAllowance,
             ohmUnstake: +unstakeAllowance,
+            oldhecUnstake: +oldunstakeAllowance,
           },
         }),
       );
@@ -74,6 +81,11 @@ export const changeApproval = createAsyncThunk(
       } else if (token === "sohm") {
         approveTx = await sohmContract.approve(
           addresses[networkID].STAKING_ADDRESS,
+          ethers.utils.parseUnits("1000000000", "gwei").toString(),
+        );
+      } else if (token === "oldshec") {
+        approveTx = await oldshecContract.approve(
+          addresses[networkID].OLD_STAKING_ADDRESS,
           ethers.utils.parseUnits("1000000000", "gwei").toString(),
         );
       }
@@ -95,12 +107,14 @@ export const changeApproval = createAsyncThunk(
     // go get fresh allowances
     stakeAllowance = await ohmContract.allowance(address, addresses[networkID].STAKING_HELPER_ADDRESS);
     unstakeAllowance = await sohmContract.allowance(address, addresses[networkID].STAKING_ADDRESS);
+    oldunstakeAllowance = await sohmContract.allowance(address, addresses[networkID].OLD_STAKING_ADDRESS);
 
     return dispatch(
       fetchAccountSuccess({
         staking: {
           ohmStake: +stakeAllowance,
           ohmUnstake: +unstakeAllowance,
+          oldhecUnstake: +oldunstakeAllowance,
         },
       }),
     );
@@ -109,19 +123,29 @@ export const changeApproval = createAsyncThunk(
 
 export const changeStake = createAsyncThunk(
   "stake/changeStake",
+<<<<<<< HEAD
+  async ({ action, value, provider, address, networkID, callback, isOld }: IActionValueAsyncThunk, { dispatch }) => {
+=======
   async ({ action, value, provider, address, networkID, callback }: IActionValueAsyncThunk, { dispatch }) => {
+>>>>>>> e2fbbe930e2b9db76df6f869c9a788e207c025d1
     if (!provider) {
       dispatch(error("Please connect your wallet!"));
       return;
     }
 
     const signer = provider.getSigner();
-    const staking = new ethers.Contract(addresses[networkID].STAKING_ADDRESS as string, OlympusStaking, signer);
-    const stakingHelper = new ethers.Contract(
-      addresses[networkID].STAKING_HELPER_ADDRESS as string,
-      StakingHelper,
-      signer,
-    );
+    let staking, stakingHelper;
+    if (isOld) {
+      staking = new ethers.Contract(addresses[networkID].OLD_STAKING_ADDRESS as string, OlympusStaking, signer);
+      stakingHelper = new ethers.Contract(
+        addresses[networkID].OLD_STAKING_HELPER_ADDRESS as string,
+        StakingHelper,
+        signer,
+      );
+    } else {
+      staking = new ethers.Contract(addresses[networkID].STAKING_ADDRESS as string, OlympusStaking, signer);
+      stakingHelper = new ethers.Contract(addresses[networkID].STAKING_HELPER_ADDRESS as string, StakingHelper, signer);
+    }
 
     let stakeTx;
     let uaData: IUAData = {

@@ -31,6 +31,7 @@ import { light as lightTheme } from "./themes/light.js";
 import { girth as gTheme } from "./themes/girth.js";
 import { v4 as uuidv4 } from "uuid";
 import "./style.scss";
+import { ohm_dai } from "./helpers/AllBonds";
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
@@ -94,7 +95,8 @@ function App() {
 
   const isAppLoading = useSelector(state => state.app.loading);
   const isAppLoaded = useSelector(state => typeof state.app.marketPrice != "undefined"); // Hacky way of determining if we were able to load app Details.
-  const { bonds } = useBonds();
+  let { bonds } = useBonds();
+  bonds = bonds.concat(ohm_dai);
   async function loadDetails(whichDetails) {
     // NOTE (unbanksy): If you encounter the following error:
     // Unhandled Rejection (Error): call revert exception (method="balanceOf(address)", errorArgs=null, errorName=null, errorSignature=null, reason=null, code=CALL_EXCEPTION, version=abi/5.4.0)
@@ -187,7 +189,6 @@ function App() {
   const handleSidebarClose = () => {
     setIsSidebarExpanded(false);
   };
-
   let themeMode = theme === "light" ? lightTheme : theme === "dark" ? darkTheme : gTheme;
 
   useEffect(() => {
@@ -215,7 +216,15 @@ function App() {
   useEffect(() => {
     if (walletChecked) {
       const updateAccountDetailInterval = setInterval(() => {
+<<<<<<< HEAD
+        try {
+          dispatch(loadAccountDetails({ networkID: chainID, address, provider: loadProvider }));
+        } catch (error) {
+          console.log(error);
+        }
+=======
         dispatch(loadAccountDetails({ networkID: chainID, address, provider }));
+>>>>>>> e2fbbe930e2b9db76df6f869c9a788e207c025d1
         bonds.map(bond => {
           dispatch(calculateUserBondDetails({ address, bond, provider, networkID: chainID }));
         });
@@ -225,7 +234,10 @@ function App() {
       };
     }
   }, [walletChecked]);
+<<<<<<< HEAD
+=======
 
+>>>>>>> e2fbbe930e2b9db76df6f869c9a788e207c025d1
   return (
     <ThemeProvider theme={themeMode}>
       <CssBaseline />

@@ -72,6 +72,8 @@ export function BondTableData({ bond }) {
   // Use BondPrice as indicator of loading.
   const isBondLoading = !bond.bondPrice ?? true;
   // const isBondLoading = useSelector(state => !state.bonding[bond]?.bondPrice ?? true);
+  const isSoldOut = bond.isSoldOut;
+  const btnVarient = isSoldOut ? "contained" : "outlined";
 
   return (
     <TableRow id={`${bond.name}--bond`}>
@@ -91,13 +93,19 @@ export function BondTableData({ bond }) {
       </TableCell>
       <TableCell align="left">
         <Typography>
-          <>
-            <span className="currency-icon">$</span>
-            {isBondLoading ? <Skeleton width="50px" /> : trim(bond.bondPrice, 2)}
-          </>
+          {isSoldOut ? (
+            "--"
+          ) : (
+            <>
+              <span className="currency-icon">$</span>
+              {isBondLoading ? <Skeleton width="50px" /> : trim(bond.bondPrice, 2)}
+            </>
+          )}
         </Typography>
       </TableCell>
-      <TableCell align="left">{isBondLoading ? <Skeleton /> : `${trim(bond.bondDiscount * 100, 2)}%`}</TableCell>
+      <TableCell align="left">
+        {isSoldOut ? "--" : <>{isBondLoading ? <Skeleton /> : `${trim(bond.bondDiscount * 100, 2)}%`}</>}
+      </TableCell>
       <TableCell align="right">
         {isBondLoading ? (
           <Skeleton />
@@ -111,11 +119,17 @@ export function BondTableData({ bond }) {
         )}
       </TableCell>
       <TableCell>
-        <Link component={NavLink} to={`/bonds/${bond.name}`}>
-          <Button variant="outlined" color="primary">
-            <Typography variant="h6">Bond</Typography>
+        {isSoldOut ? (
+          <Button variant={btnVarient} color="primary" disabled={isSoldOut}>
+            <Typography variant="h6">Sold Out</Typography>
           </Button>
-        </Link>
+        ) : (
+          <Link component={NavLink} to={`/bonds/${bond.name}`}>
+            <Button variant={btnVarient} color="primary">
+              <Typography variant="h6">Bond</Typography>
+            </Button>
+          </Link>
+        )}
       </TableCell>
     </TableRow>
   );

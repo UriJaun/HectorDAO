@@ -130,7 +130,11 @@ function NavContent() {
                         <Typography variant="body2">
                           {bond.displayName}
                           <span className="bond-pair-roi">
-                            {bond.bondDiscount && trim(bond.bondDiscount * 100, 2)}%
+                            {bond.isSoldOut ? (
+                              "Sold Out"
+                            ) : (
+                              <>{bond.bondDiscount && trim(bond.bondDiscount * 100, 2)}%</>
+                            )}
                           </span>
                         </Typography>
                       )}

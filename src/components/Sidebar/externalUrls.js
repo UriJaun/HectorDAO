@@ -24,7 +24,7 @@ const externalUrls = [
     icon: <SvgIcon viewBox="0 0 64 64" color="primary" component={SpookySwapIcon} />,
   },
   {
-    title: "Buy on SpritSwap",
+    title: "Buy on SpiritSwap",
     url: "https://swap.spiritswap.finance/#/exchange/swap/0x5c4fdfc5233f935f20d2adba572f770c2e377ab0",
     icon: <SvgIcon viewBox="0 0 155 172" color="primary" component={SpiritSwapIcon} />,
   },

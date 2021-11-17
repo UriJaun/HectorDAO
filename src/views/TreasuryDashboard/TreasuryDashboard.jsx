@@ -42,9 +42,19 @@ function TreasuryDashboard() {
   const currentIndex = useSelector(state => {
     return state.app.currentIndex;
   });
+<<<<<<< HEAD
+
+  const runwayValue = useSelector(state => {
+    return state.app.runway;
+  });
+  // const backingPerOhm = useSelector(state => {
+  //   return state.app.treasuryMarketValue / state.app.circSupply;
+  // });
+=======
   const rebase = useSelector(state => {
     return state.app.stakingRebase;
   });
+>>>>>>> e2fbbe930e2b9db76df6f869c9a788e207c025d1
   const backingPerOhm = useSelector(state => {
     if (state.bonding.loading == false) {
       let tokenBalances = 0;
@@ -175,7 +185,10 @@ function TreasuryDashboard() {
                   {currentIndex ? trim(currentIndex, 2) + " sHEC" : <Skeleton type="text" />}
                 </Typography>
               </Box>
+<<<<<<< HEAD
+=======
 
+>>>>>>> e2fbbe930e2b9db76df6f869c9a788e207c025d1
               <Box className="metric runway">
                 <Typography variant="h6" color="textSecondary">
                   Runway

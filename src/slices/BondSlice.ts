@@ -70,6 +70,7 @@ export interface IBondDetails {
   maxBondPrice: number;
   bondPrice: number;
   marketPrice: number;
+  isSoldOut?: boolean;
 }
 export const calcBondDetails = createAsyncThunk(
   "bonding/calcBondDetails",
@@ -87,7 +88,7 @@ export const calcBondDetails = createAsyncThunk(
     const bondContract = bond.getContractForBond(networkID, provider);
     // const bondCalcContract = getBondCalculator(networkID, provider);
     let bondCalcContract;
-    if (bond.name == "hec_usdc_lp") {
+    if (bond.name == "hec_usdc_lp" || bond.name == "hec_dai_lp") {
       bondCalcContract = getBondCalculator1(networkID, provider);
     } else {
       bondCalcContract = getBondCalculator(networkID, provider);
@@ -96,6 +97,12 @@ export const calcBondDetails = createAsyncThunk(
     const terms = await bondContract.terms();
     const maxBondPrice = await bondContract.maxPayout();
     const debtRatio = (await bondContract.standardizedDebtRatio()) / Math.pow(10, 9);
+    const totalDebt = await bondContract.totalDebt();
+    const maxDebt = terms.maxDebt;
+    let isSoldOut = false;
+    if (Number(totalDebt) >= Number(maxDebt)) {
+      isSoldOut = true;
+    }
 
     let marketPrice: number = 0;
     try {
@@ -159,6 +166,9 @@ export const calcBondDetails = createAsyncThunk(
     } else {
       bondPrice = bondPrice / Math.pow(10, 18);
     }
+    if (isSoldOut) {
+      bondDiscount = -0.1;
+    }
 
     return {
       bond: bond.name,
@@ -170,6 +180,7 @@ export const calcBondDetails = createAsyncThunk(
       maxBondPrice: maxBondPrice / Math.pow(10, 9),
       bondPrice: bondPrice,
       marketPrice: marketPrice,
+      isSoldOut: isSoldOut,
     };
   },
 );

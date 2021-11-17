@@ -158,8 +158,8 @@ export const usdc = new StableBond({
 });
 
 export const ohm_dai = new LPBond({
-  name: "hec_dai_lp",
-  displayName: "HEC-DAI LP",
+  name: "hec_dai_lp_v1",
+  displayName: "HEC-DAI LP v1",
   bondToken: "DAI",
   bondIconSvg: OhmDaiImg,
   bondContractABI: BondOhmDaiContract,
@@ -167,6 +167,27 @@ export const ohm_dai = new LPBond({
   networkAddrs: {
     [NetworkID.Mainnet]: {
       bondAddress: "0xA1224c353cdCB03eB70FbA44dADC137F39E5EF7d",
+      reserveAddress: "0xbc0eecdA2d8141e3a26D2535C57cadcb1095bca9",
+    },
+    [NetworkID.Testnet]: {
+      bondAddress: "0xcF449dA417cC36009a1C6FbA78918c31594B9377",
+      reserveAddress: "0x8D5a22Fb6A1840da602E56D1a260E56770e0bCE2",
+    },
+  },
+  lpUrl:
+    "https://spookyswap.finance/add/0x5C4FDfc5233f935f20D2aDbA572F770c2E377Ab0/0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E",
+});
+
+export const hec_dai_v2 = new LPBond({
+  name: "hec_dai_lp",
+  displayName: "HEC-DAI LP v2",
+  bondToken: "DAI",
+  bondIconSvg: OhmDaiImg,
+  bondContractABI: BondOhmDaiContract,
+  reserveContract: ReserveOhmDaiContract,
+  networkAddrs: {
+    [NetworkID.Mainnet]: {
+      bondAddress: "0x6c9b3a47a28a39fea65e99d97895e717df1706d0",
       reserveAddress: "0xbc0eecdA2d8141e3a26D2535C57cadcb1095bca9",
     },
     [NetworkID.Testnet]: {
@@ -252,7 +273,7 @@ export const ohm_weth = new CustomBond({
 // Is it a stableCoin bond? use `new StableBond`
 // Is it an LP Bond? use `new LPBond`
 // Add new bonds to this array!!
-export const allBonds = [ohm_dai, hec_usdc, eth, dai, usdc];
+export const allBonds = [hec_dai_v2, hec_usdc, eth, dai, usdc];
 export const allBondsMap = allBonds.reduce((prevVal, bond) => {
   return { ...prevVal, [bond.name]: bond };
 }, {});
