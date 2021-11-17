@@ -6,7 +6,8 @@ import Chart from "../../components/Chart/Chart.jsx";
 import { trim, formatCurrency } from "../../helpers";
 import {
   treasuryDataQuery,
-  rebasesDataQuery,
+  rebasesV1DataQuery,
+  rebasesV2DataQuery,
   bulletpoints,
   tooltipItems,
   tooltipInfoMessages,
@@ -82,13 +83,13 @@ function TreasuryDashboard() {
       setRunway(runway);
     });
 
-    apollo(rebasesDataQuery).then(r => {
+    apollo(rebasesV1DataQuery).then(r => {
       let apy = r.data.rebases.map(entry => ({
         apy: Math.pow(parseFloat(entry.percentage) + 1, 365 * 3) * 100,
         timestamp: entry.timestamp,
       }));
 
-      apy = apy.filter(pm => pm.apy < 300000);
+      apy = apy.filter(pm => pm.apy < 5000000);
 
       setApy(apy);
     });
@@ -218,17 +219,11 @@ function TreasuryDashboard() {
                 <Chart
                   type="stack"
                   data={data}
-                  dataKey={[
-                    "treasuryDaiMarketValue",
-                    "treasuryFraxMarketValue",
-                    "treasuryWETHMarketValue",
-                    "treasuryXsushiMarketValue",
-                  ]}
+                  dataKey={["treasuryDaiMarketValue", "treasuryUsdcMarketValue", "treasuryWFTMMarketValue"]}
                   stopColor={[
                     ["#F5AC37", "#EA9276"],
                     ["#768299", "#98B3E9"],
                     ["#DC30EB", "#EA98F1"],
-                    ["#8BFF4D", "#4C8C2A"],
                   ]}
                   headerText="Market Value of Treasury Assets"
                   headerSubText={`${data && formatCurrency(data[0].treasuryMarketValue)}`}
@@ -247,7 +242,7 @@ function TreasuryDashboard() {
                   type="stack"
                   data={data}
                   format="currency"
-                  dataKey={["treasuryDaiRiskFreeValue", "treasuryFraxRiskFreeValue"]}
+                  dataKey={["treasuryDaiRiskFreeValue", "treasuryUsdcRiskFreeValue"]}
                   stopColor={[
                     ["#F5AC37", "#EA9276"],
                     ["#768299", "#98B3E9"],

@@ -16,12 +16,11 @@ query {
     treasuryMarketValue
     nextEpochRebase
     nextDistributedOhm
-    treasuryDaiRiskFreeValue
-    treasuryFraxMarketValue
     treasuryDaiMarketValue
-    treasuryFraxRiskFreeValue
-    treasuryXsushiMarketValue
-    treasuryWETHMarketValue
+    treasuryDaiRiskFreeValue
+    treasuryUsdcMarketValue
+    treasuryUsdcRiskFreeValue
+    treasuryWFTMMarketValue
     currentAPY
     runway10k
     runway20k
@@ -29,14 +28,23 @@ query {
     runwayCurrent
     holders
     treasuryOhmDaiPOL
-    treasuryOhmFraxPOL
+    treasuryOhmUsdcPOL
   }
 }
 `;
 
-export const rebasesDataQuery = `
+export const rebasesV1DataQuery = `
 query {
   rebases(where: {contract: "0x9ae7972BA46933B3B20aaE7Acbf6C311847aCA40"}, orderBy: timestamp, first: 1000, orderDirection: desc) {
+    percentage
+    timestamp
+  }
+}
+`;
+
+export const rebasesV2DataQuery = `
+query {
+  rebases(where: {contract: "0xD12930C8deeDafD788F437879cbA1Ad1E3908Cc5"}, orderBy: timestamp, first: 1000, orderDirection: desc) {
     percentage
     timestamp
   }
@@ -137,7 +145,7 @@ export const bulletpoints = {
 
 export const tooltipItems = {
   tvl: ["Total Value Deposited"],
-  coin: ["DAI", "FRAX", "ETH", "SUSHI"],
+  coin: ["DAI", "USDC", "WFTM"],
   holder: ["OHMies"],
   apy: ["APY"],
   runway: ["Days"],
@@ -145,14 +153,14 @@ export const tooltipItems = {
 };
 
 export const tooltipInfoMessages = {
-  tvl: "Total Value Deposited, is the dollar amount of all OHM staked in the protocol. This metric is often used as growth or health indicator in DeFi projects.",
+  tvl: "Total Value Deposited, is the dollar amount of all HEC staked in the protocol. This metric is often used as growth or health indicator in DeFi projects.",
   mvt: "Market Value of Treasury Assets, is the sum of the value (in dollars) of all assets held by the treasury.",
-  rfv: "Risk Free Value, is the amount of funds the treasury guarantees to use for backing OHM.",
+  rfv: "Risk Free Value, is the amount of funds the treasury guarantees to use for backing HEC.",
   pol: "Protocol Owned Liquidity, is the amount of LP the treasury owns and controls. The more POL the better for the protocol and its users.",
-  holder: "Holders, represents the total number of Ohmies (sOHM holders)",
-  staked: "OHM Staked, is the ratio of sOHM to OHM (staked vs unstaked)",
+  holder: "Holders, represents the total number of Hectors (sHEC holders)",
+  staked: "HEC Staked, is the ratio of sHEC to HEC (staked vs unstaked)",
   apy: "Annual Percentage Yield, is the normalized representation of an interest rate, based on a compounding period over one year. Note that APYs provided are rather ballpark level indicators and not so much precise future results.",
-  runway: "Runway, is the number of days sOHM emissions can be sustained at a given rate. Lower APY = longer runway",
+  runway: "Runway, is the number of days sHEC emissions can be sustained at a given rate. Lower APY = longer runway",
 };
 
 export const itemType = {
