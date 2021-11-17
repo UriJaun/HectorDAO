@@ -29,6 +29,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
   const currentBlock = useSelector(state => {
     return state.app.currentBlock;
   });
+  const isSoldOut = bond.isSoldOut;
 
   const isBondLoading = useSelector(state => state.bonding.loading ?? true);
 
@@ -143,6 +144,10 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
       <Box display="flex" justifyContent="space-around" flexWrap="wrap">
         {isAllowanceDataLoading ? (
           <Skeleton width="200px" />
+        ) : isSoldOut ? (
+          <Button variant="contained" color="primary" className="transaction-button" disabled>
+            Sold Out
+          </Button>
         ) : (
           <>
             {!hasAllowance() ? (
@@ -220,7 +225,11 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
           <div className={`data-row`}>
             <Typography>You Will Get</Typography>
             <Typography id="bond-value-id" className="price-data">
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.bondQuote, 4) || "0"} HEC`}
+              {isSoldOut ? (
+                "0 HEC"
+              ) : (
+                <>{isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.bondQuote, 4) || "0"} HEC`}</>
+              )}
             </Typography>
           </div>
 
@@ -234,7 +243,11 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
           <div className="data-row">
             <Typography>ROI</Typography>
             <Typography>
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.bondDiscount * 100, 2)}%`}
+              {isSoldOut ? (
+                "--"
+              ) : (
+                <>{isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.bondDiscount, 4) || "0"} %`}</>
+              )}
             </Typography>
           </div>
 

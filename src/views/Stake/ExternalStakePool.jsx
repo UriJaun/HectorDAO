@@ -40,7 +40,6 @@ export default function ExternalStakePool() {
     return state.account && state.account.bonds?.ohm_lusd_lp?.balance;
   });
 
-
   useEffect(() => {
     if (hasCachedProvider()) {
       // then user DOES have a wallet

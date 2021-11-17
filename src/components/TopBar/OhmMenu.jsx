@@ -63,8 +63,8 @@ function OhmMenu() {
 
   const networkID = chainID;
 
-  const SOHM_ADDRESS = addresses[networkID].SOHM_ADDRESS;
-  const OHM_ADDRESS = addresses[networkID].OHM_ADDRESS;
+  const SHEC_ADDRESS = addresses[networkID].SHEC_ADDRESS;
+  const HEC_ADDRESS = addresses[networkID].HEC_ADDRESS;
   const PT_TOKEN_ADDRESS = addresses[networkID].PT_TOKEN_ADDRESS;
   const USDC_ADDRESS = addresses[networkID].USDC_ADDRESS;
 
@@ -95,7 +95,7 @@ function OhmMenu() {
               <Paper className="ohm-menu" elevation={1}>
                 <Box component="div" className="buy-tokens">
                   <Link
-                    href={`https://spookyswap.finance/swap?inputCurrency=${daiAddress}&outputCurrency=${OHM_ADDRESS}`}
+                    href={`https://spookyswap.finance/swap?inputCurrency=${daiAddress}&outputCurrency=${HEC_ADDRESS}`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -107,7 +107,7 @@ function OhmMenu() {
                   </Link>
 
                   <Link
-                    href={`https://swap.spiritswap.finance/#/add/${USDC_ADDRESS}/${OHM_ADDRESS}`}
+                    href={`https://swap.spiritswap.finance/#/add/${USDC_ADDRESS}/${HEC_ADDRESS}`}
                     target="_blank"
                     rel="noreferrer"
                   >
@@ -143,7 +143,7 @@ function OhmMenu() {
                     <Divider color="secondary" />
                     <p>ADD TOKEN TO WALLET</p>
                     <Box display="flex" flexDirection="row" justifyContent="space-between">
-                      <Button variant="contained" color="secondary" onClick={addTokenToWallet("HEC", OHM_ADDRESS)}>
+                      <Button variant="contained" color="secondary" onClick={addTokenToWallet("HEC", HEC_ADDRESS)}>
                         <SvgIcon
                           component={ohmTokenImg}
                           viewBox="0 0 32 32"
@@ -151,7 +151,7 @@ function OhmMenu() {
                         />
                         <Typography variant="body1">HEC</Typography>
                       </Button>
-                      <Button variant="contained" color="secondary" onClick={addTokenToWallet("sHEC", SOHM_ADDRESS)}>
+                      <Button variant="contained" color="secondary" onClick={addTokenToWallet("sHEC", SHEC_ADDRESS)}>
                         <SvgIcon
                           component={sOhmTokenImg}
                           viewBox="0 0 100 100"

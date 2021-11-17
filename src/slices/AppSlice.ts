@@ -11,46 +11,29 @@ import apollo from "../lib/apolloClient.js";
 import { createSlice, createSelector, createAsyncThunk } from "@reduxjs/toolkit";
 import { RootState } from "src/store";
 import { IBaseAsyncThunk } from "./interfaces";
+import { calcRunway } from "src/helpers/Runway";
 
 const initialState = {
   loading: false,
   loadingMarketPrice: false,
 };
-
+const circulatingSupply = {
+  inputs: [],
+  name: "circulatingSupply",
+  outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+  stateMutability: "view",
+  type: "function",
+};
 export const loadAppDetails = createAsyncThunk(
   "app/loadAppDetails",
   async ({ networkID, provider }: IBaseAsyncThunk, { dispatch }) => {
-    const protocolMetricsQuery = `
-  query {
-    _meta {
-      block {
-        number
-      }
-    }
-    protocolMetrics(first: 1, orderBy: timestamp, orderDirection: desc) {
-      timestamp
-      ohmCirculatingSupply
-      sOhmCirculatingSupply
-      totalSupply
-      ohmPrice
-      marketCap
-      totalValueLocked
-      treasuryMarketValue
-      nextEpochRebase
-      nextDistributedOhm
-    }
-  }
-`;
-
-    const graphData = await apollo(protocolMetricsQuery);
-
-    if (!graphData || graphData == null) {
-      console.error("Returned a null response when querying TheGraph");
-      return;
-    }
-
     const stakingContract = new ethers.Contract(
       addresses[networkID].STAKING_ADDRESS as string,
+      OlympusStakingv2,
+      provider,
+    );
+    const old_stakingContract = new ethers.Contract(
+      addresses[networkID].OLD_STAKING_ADDRESS as string,
       OlympusStakingv2,
       provider,
     );
@@ -67,17 +50,25 @@ export const loadAppDetails = createAsyncThunk(
       console.error("Returned a null response from dispatch(loadMarketPrice)");
       return;
     }
-    const sohmMainContract = new ethers.Contract(addresses[networkID].SOHM_ADDRESS as string, sOHMv2, provider);
-    const ohmContract = new ethers.Contract(addresses[networkID].OHM_ADDRESS as string, ierc20Abi, provider);
-    const hecBalance = await ohmContract.balanceOf(addresses[networkID].STAKING_ADDRESS);
-    const stakingTVL = (hecBalance * marketPrice) / 1000000000;
-    const circ = await sohmMainContract.circulatingSupply();
-    const circSupply = circ / 1000000000;
-    const total = await ohmContract.totalSupply();
+    const sHecMainContract = new ethers.Contract(addresses[networkID].SHEC_ADDRESS as string, sOHMv2, provider);
+    const hecContract = new ethers.Contract(addresses[networkID].HEC_ADDRESS as string, ierc20Abi, provider);
+    const oldsHecContract = new ethers.Contract(
+      addresses[networkID].OLD_SHEC_ADDRESS as string,
+      [circulatingSupply],
+      provider,
+    );
+    const old_circ = await oldsHecContract.circulatingSupply();
+    const hecBalance = await hecContract.balanceOf(addresses[networkID].STAKING_ADDRESS);
+    const old_hecBalance = await hecContract.balanceOf(addresses[networkID].OLD_STAKING_ADDRESS);
+    const stakingTVL = (hecBalance * marketPrice) / 1000000000 + (old_hecBalance * marketPrice) / 1000000000;
+    // const stakingTVL = (hecBalance * marketPrice) / 1000000000;
+    const circ = await sHecMainContract.circulatingSupply();
+    const circSupply = circ / 1000000000 + old_circ / 1000000000;
+    // const circSupply = circ / 1000000000;
+    const total = await hecContract.totalSupply();
     const totalSupply = total / 1000000000;
-    const marketCap = marketPrice * totalSupply;
-    const treasuryMarketValue = parseFloat(graphData.data.protocolMetrics[0].treasuryMarketValue);
-    // const currentBlock = parseFloat(graphData.data._meta.block.number);
+    const marketCap = marketPrice * circSupply;
+    const runway = await calcRunway(circSupply, { networkID, provider });
     if (!provider) {
       console.error("failed to connect to provider, please connect your wallet");
       return {
@@ -86,42 +77,43 @@ export const loadAppDetails = createAsyncThunk(
         marketCap,
         circSupply,
         totalSupply,
-        treasuryMarketValue,
+        // treasuryMarketValue,
+        runway: runway,
       };
     }
     const currentBlock = await provider.getBlockNumber();
 
-    const oldStakingContract = new ethers.Contract(
-      addresses[networkID].OLD_STAKING_ADDRESS as string,
-      OlympusStaking,
-      provider,
-    );
-    const sohmOldContract = new ethers.Contract(addresses[networkID].OLD_SOHM_ADDRESS as string, sOHM, provider);
-
     // Calculating staking
     const epoch = await stakingContract.epoch();
+    const old_epoch = await old_stakingContract.epoch();
     const stakingReward = epoch.distribute;
+    const old_stakingReward = old_epoch.distribute;
     const stakingRebase = stakingReward / circ;
+    const old_stakingRebase = old_stakingReward / old_circ;
     const fiveDayRate = Math.pow(1 + stakingRebase, 5 * 3) - 1;
+    const old_fiveDayRate = Math.pow(1 + old_stakingRebase, 5 * 3) - 1;
     const stakingAPY = Math.pow(1 + stakingRebase, 365 * 3) - 1;
     // Current index
     let currentIndex = await stakingContract.index();
-    currentIndex = currentIndex.sub(1300000000);
+    currentIndex = currentIndex;
     const endBlock = epoch.endBlock;
 
     return {
       currentIndex: ethers.utils.formatUnits(currentIndex, "gwei"),
       currentBlock,
       fiveDayRate,
+      old_fiveDayRate,
       stakingAPY,
       stakingTVL,
       stakingRebase,
+      old_stakingRebase,
       marketCap,
       marketPrice,
       circSupply,
       totalSupply,
-      treasuryMarketValue,
+      // treasuryMarketValue,
       endBlock,
+      runway: runway,
     } as IAppData;
   },
 );
@@ -186,14 +178,15 @@ interface IAppData {
   readonly currentIndex?: string;
   readonly currentBlock?: number;
   readonly fiveDayRate?: number;
+  readonly oldfiveDayRate?: number;
   readonly marketCap: number;
   readonly marketPrice: number;
   readonly stakingAPY?: number;
   readonly stakingRebase?: number;
+  readonly old_stakingRebase?: number;
   readonly stakingTVL: number;
   readonly totalSupply: number;
   readonly treasuryBalance?: number;
-  readonly treasuryMarketValue?: number;
   readonly endBlock?: number;
 }
 

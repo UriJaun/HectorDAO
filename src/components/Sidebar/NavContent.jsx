@@ -130,7 +130,11 @@ function NavContent() {
                         <Typography variant="body2">
                           {bond.displayName}
                           <span className="bond-pair-roi">
-                            {bond.bondDiscount && trim(bond.bondDiscount * 100, 2)}%
+                            {bond.isSoldOut ? (
+                              "Sold Out"
+                            ) : (
+                              <>{bond.bondDiscount && trim(bond.bondDiscount * 100, 2)}%</>
+                            )}
                           </span>
                         </Typography>
                       )}
@@ -143,11 +147,16 @@ function NavContent() {
         </div>
         <Box className="dapp-menu-bottom" display="flex" justifyContent="space-between" flexDirection="column">
           <div className="dapp-menu-external-links">
-            {Object.keys(externalUrls).map((link, i) => {
+            {externalUrls.map(({ url, icon, title, label }, i) => {
               return (
-                <Link key={i} href={`${externalUrls[link].url}`} target="_blank">
-                  <Typography variant="h6">{externalUrls[link].icon}</Typography>
-                  <Typography variant="h6">{externalUrls[link].title}</Typography>
+                <Link key={i} href={url} target="_blank" component={url ? "a" : "span"}>
+                  <Typography variant="h6">{icon}</Typography>
+                  <Typography variant="h6">{title}</Typography>
+                  {label ? (
+                    <Typography variant="caption" style={{ marginLeft: "8px" }}>
+                      {label}
+                    </Typography>
+                  ) : null}
                 </Link>
               );
             })}

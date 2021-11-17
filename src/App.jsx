@@ -31,6 +31,7 @@ import { light as lightTheme } from "./themes/light.js";
 import { girth as gTheme } from "./themes/girth.js";
 import { v4 as uuidv4 } from "uuid";
 import "./style.scss";
+import { ohm_dai } from "./helpers/AllBonds";
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
@@ -94,7 +95,8 @@ function App() {
 
   const isAppLoading = useSelector(state => state.app.loading);
   const isAppLoaded = useSelector(state => typeof state.app.marketPrice != "undefined"); // Hacky way of determining if we were able to load app Details.
-  const { bonds } = useBonds();
+  let { bonds } = useBonds();
+  bonds = bonds.concat(ohm_dai);
   async function loadDetails(whichDetails) {
     // NOTE (unbanksy): If you encounter the following error:
     // Unhandled Rejection (Error): call revert exception (method="balanceOf(address)", errorArgs=null, errorName=null, errorSignature=null, reason=null, code=CALL_EXCEPTION, version=abi/5.4.0)
@@ -187,7 +189,6 @@ function App() {
   const handleSidebarClose = () => {
     setIsSidebarExpanded(false);
   };
-
   let themeMode = theme === "light" ? lightTheme : theme === "dark" ? darkTheme : gTheme;
 
   useEffect(() => {
@@ -198,6 +199,37 @@ function App() {
     if (isSidebarExpanded) handleSidebarClose();
   }, [location]);
 
+  useEffect(() => {
+    if (connected) {
+      const updateAppDetailsInterval = setInterval(() => {
+        dispatch(loadAppDetails({ networkID: chainID, provider }));
+        bonds.map(bond => {
+          dispatch(calcBondDetails({ bond, value: null, provider, networkID: chainID }));
+        });
+      }, 1000 * 60);
+      return () => {
+        clearInterval(updateAppDetailsInterval);
+      };
+    }
+  }, [connected]);
+
+  useEffect(() => {
+    if (walletChecked) {
+      const updateAccountDetailInterval = setInterval(() => {
+        try {
+          dispatch(loadAccountDetails({ networkID: chainID, address, provider: loadProvider }));
+        } catch (error) {
+          console.log(error);
+        }
+        bonds.map(bond => {
+          dispatch(calculateUserBondDetails({ address, bond, provider, networkID: chainID }));
+        });
+      }, 1000 * 60 * 10);
+      return () => {
+        clearInterval(updateAccountDetailInterval);
+      };
+    }
+  }, [walletChecked]);
   return (
     <ThemeProvider theme={themeMode}>
       <CssBaseline />

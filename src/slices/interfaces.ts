@@ -28,6 +28,8 @@ export interface IValueAsyncThunk extends IBaseAsyncThunk {
 
 export interface IActionValueAsyncThunk extends IValueAsyncThunk {
   readonly action: string;
+  readonly callback?: () => void;
+  readonly isOld?: boolean;
 }
 
 export interface IBaseAddressAsyncThunk extends IBaseAsyncThunk {

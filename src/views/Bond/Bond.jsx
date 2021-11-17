@@ -45,6 +45,7 @@ function Bond({ bond }) {
     setView(newView);
   };
 
+  const isSoldOut = bond.isSoldOut;
   return (
     <Fade in={true} mountOnEnter unmountOnExit>
       <Grid container id="bond-view">
@@ -65,7 +66,7 @@ function Bond({ bond }) {
                     Bond Price
                   </Typography>
                   <Typography variant="h3" className="price" color="primary">
-                    {isBondLoading ? <Skeleton /> : formatCurrency(bond.bondPrice, 2)}
+                    {isSoldOut ? "--" : <>{isBondLoading ? <Skeleton /> : formatCurrency(bond.bondPrice, 2)}</>}
                   </Typography>
                 </div>
                 <div className="bond-price-data">

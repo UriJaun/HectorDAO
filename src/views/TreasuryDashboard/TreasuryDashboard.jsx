@@ -44,6 +44,9 @@ function TreasuryDashboard() {
     return state.app.currentIndex;
   });
 
+  const runwayValue = useSelector(state => {
+    return state.app.runway;
+  });
   // const backingPerOhm = useSelector(state => {
   //   return state.app.treasuryMarketValue / state.app.circSupply;
   // });
@@ -173,6 +176,19 @@ function TreasuryDashboard() {
                 </Typography>
                 <Typography variant="h5">
                   {currentIndex ? trim(currentIndex, 2) + " sHEC" : <Skeleton type="text" />}
+                </Typography>
+              </Box>
+              <Box className="metric runway">
+                <Typography variant="h6" color="textSecondary">
+                  Runway
+                  <InfoTooltip
+                    message={
+                      "Runway, is the number of days sHEC emissions can be sustained at a given rate. Lower APY = longer runway"
+                    }
+                  />
+                </Typography>
+                <Typography variant="h5">
+                  {runwayValue ? trim(runwayValue, 0) + " days" : <Skeleton type="text" />}
                 </Typography>
               </Box>
             </Box>
