@@ -143,18 +143,11 @@ function Stake() {
       changeStake({
         address,
         action,
-<<<<<<< HEAD
         value: value.toString(),
         provider,
         networkID: chainID,
         callback: () => (isOld ? setOldQuantity("") : setQuantity("")),
-        isOld: isOld,
-=======
-        value: quantity.toString(),
-        provider,
-        networkID: chainID,
-        callback: () => setQuantity(""),
->>>>>>> e2fbbe930e2b9db76df6f869c9a788e207c025d1
+        isOld,
       }),
     );
   };

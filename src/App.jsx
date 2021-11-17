@@ -216,15 +216,7 @@ function App() {
   useEffect(() => {
     if (walletChecked) {
       const updateAccountDetailInterval = setInterval(() => {
-<<<<<<< HEAD
-        try {
-          dispatch(loadAccountDetails({ networkID: chainID, address, provider: loadProvider }));
-        } catch (error) {
-          console.log(error);
-        }
-=======
         dispatch(loadAccountDetails({ networkID: chainID, address, provider }));
->>>>>>> e2fbbe930e2b9db76df6f869c9a788e207c025d1
         bonds.map(bond => {
           dispatch(calculateUserBondDetails({ address, bond, provider, networkID: chainID }));
         });
@@ -234,10 +226,7 @@ function App() {
       };
     }
   }, [walletChecked]);
-<<<<<<< HEAD
-=======
 
->>>>>>> e2fbbe930e2b9db76df6f869c9a788e207c025d1
   return (
     <ThemeProvider theme={themeMode}>
       <CssBaseline />

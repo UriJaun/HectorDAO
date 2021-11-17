@@ -5,11 +5,7 @@ import { abi as OlympusStaking } from "../abi/OlympusStakingv2.json";
 import { abi as StakingHelper } from "../abi/StakingHelper.json";
 import { clearPendingTxn, fetchPendingTxns, getStakingTypeText } from "./PendingTxnsSlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-<<<<<<< HEAD
-import { fetchAccountSuccess, getBalances, loadAccountDetails } from "./AccountSlice";
-=======
 import { fetchAccountSuccess, loadAccountDetails } from "./AccountSlice";
->>>>>>> e2fbbe930e2b9db76df6f869c9a788e207c025d1
 import { error, info } from "../slices/MessagesSlice";
 import { IActionValueAsyncThunk, IChangeApprovalAsyncThunk, IJsonRPCError } from "./interfaces";
 import { segmentUA } from "../helpers/userAnalyticHelpers";
@@ -123,11 +119,7 @@ export const changeApproval = createAsyncThunk(
 
 export const changeStake = createAsyncThunk(
   "stake/changeStake",
-<<<<<<< HEAD
   async ({ action, value, provider, address, networkID, callback, isOld }: IActionValueAsyncThunk, { dispatch }) => {
-=======
-  async ({ action, value, provider, address, networkID, callback }: IActionValueAsyncThunk, { dispatch }) => {
->>>>>>> e2fbbe930e2b9db76df6f869c9a788e207c025d1
     if (!provider) {
       dispatch(error("Please connect your wallet!"));
       return;
