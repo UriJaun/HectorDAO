@@ -1,6 +1,5 @@
 import { ethers } from "ethers";
 import { addresses } from "../constants";
-import { abi as OlympusStaking } from "../abi/OlympusStaking.json";
 import { abi as OlympusStakingv2 } from "../abi/OlympusStakingv2.json";
 import { abi as sOHM } from "../abi/sOHM.json";
 import { abi as ierc20Abi } from "../abi/IERC20.json";
@@ -17,6 +16,7 @@ const initialState = {
   loading: false,
   loadingMarketPrice: false,
 };
+<<<<<<< HEAD
 const circulatingSupply = {
   inputs: [],
   name: "circulatingSupply",
@@ -108,15 +108,116 @@ export const loadAppDetails = createAsyncThunk(
       stakingRebase,
       old_stakingRebase,
       marketCap,
+=======
+
+export const loadAppDetails = createAsyncThunk("app/loadAppDetails", async (thunk: IBaseAsyncThunk, { dispatch }) => {
+  const { networkID, provider } = thunk;
+  // const protocolMetricsQuery = `
+  // query {
+  //   _meta {
+  //     block {
+  //       number
+  //     }
+  //   }
+  //   protocolMetrics(first: 1, orderBy: timestamp, orderDirection: desc) {
+  //     timestamp
+  //     ohmCirculatingSupply
+  //     sOhmCirculatingSupply
+  //     totalSupply
+  //     ohmPrice
+  //     marketCap
+  //     totalValueLocked
+  //     treasuryMarketValue
+  //     nextEpochRebase
+  //     nextDistributedOhm
+  //   }
+  // }
+  // `;
+  //
+  // const graphData = await apollo(protocolMetricsQuery);
+  //
+  // if (!graphData) {
+  //   console.error("Returned a null response when querying TheGraph");
+  //   return;
+  // }
+
+  const stakingContract = new ethers.Contract(
+    addresses[networkID].STAKING_ADDRESS as string,
+    OlympusStakingv2,
+    provider,
+  );
+  // NOTE (appleseed): marketPrice from Graph was delayed, so get CoinGecko price
+  // const marketPrice = parseFloat(graphData.data.protocolMetrics[0].ohmPrice);
+  let marketPrice;
+  try {
+    const originalPromiseResult = await dispatch(
+      loadMarketPrice({ networkID: networkID, provider: provider }),
+    ).unwrap();
+    marketPrice = originalPromiseResult?.marketPrice;
+  } catch (rejectedValueOrSerializedError) {
+    // handle error here
+    console.error("Returned a null response from dispatch(loadMarketPrice)");
+    return;
+  }
+  const sohmMainContract = new ethers.Contract(addresses[networkID].SOHM_ADDRESS as string, sOHMv2, provider);
+  const ohmContract = new ethers.Contract(addresses[networkID].OHM_ADDRESS as string, ierc20Abi, provider);
+  const hecBalance = await ohmContract.balanceOf(addresses[networkID].STAKING_ADDRESS);
+  const stakingTVL = (hecBalance * marketPrice) / 1000000000;
+  const circ = await sohmMainContract.circulatingSupply();
+  const circSupply = circ / 1000000000;
+  const total = await ohmContract.totalSupply();
+  const totalSupply = total / 1000000000;
+  const marketCap = marketPrice * totalSupply;
+  // const treasuryMarketValue = parseFloat(graphData.data.protocolMetrics[0].treasuryMarketValue);
+  // const currentBlock = parseFloat(graphData.data._meta.block.number);
+  if (!provider) {
+    console.error("failed to connect to provider, please connect your wallet");
+    return {
+      stakingTVL,
+>>>>>>> e2fbbe930e2b9db76df6f869c9a788e207c025d1
       marketPrice,
+      marketCap,
       circSupply,
       totalSupply,
       // treasuryMarketValue,
+<<<<<<< HEAD
       endBlock,
       runway: runway,
     } as IAppData;
   },
 );
+=======
+    };
+  }
+  const currentBlock = await provider.getBlockNumber();
+
+  // Calculating staking
+  const epoch = await stakingContract.epoch();
+  const stakingReward = epoch.distribute;
+  const stakingRebase = stakingReward / circ;
+  const fiveDayRate = Math.pow(1 + stakingRebase, 5 * 3) - 1;
+  const stakingAPY = Math.pow(1 + stakingRebase, 365 * 3) - 1;
+  // Current index
+  let currentIndex = await stakingContract.index();
+  currentIndex = currentIndex.sub(1300000000);
+  const endBlock = epoch.endBlock;
+
+  return {
+    currentIndex: ethers.utils.formatUnits(currentIndex, "gwei"),
+    currentBlock,
+    fiveDayRate,
+    stakingAPY,
+    stakingTVL,
+    stakingRebase,
+    marketCap,
+    marketPrice,
+    circSupply,
+    totalSupply,
+    // treasuryMarketValue,
+    endBlock,
+  } as IAppData;
+});
+>>>>>>> e2fbbe930e2b9db76df6f869c9a788e207c025d1
 
 /**
  * checks if app.slice has marketPrice already
