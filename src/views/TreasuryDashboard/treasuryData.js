@@ -3,7 +3,7 @@ import apollo from "../../lib/apolloClient";
 // TODO: add paramaterization
 export const treasuryDataQuery = `
 query {
-  protocolMetrics(first: 100, orderBy: timestamp, orderDirection: desc) {
+  protocolMetrics(first: 1000, orderBy: timestamp, orderDirection: desc) {
     id
     timestamp
     ohmCirculatingSupply
