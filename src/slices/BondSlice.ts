@@ -309,10 +309,9 @@ export const redeemAllBonds = createAsyncThunk(
 
       await redeemAllTx.wait();
 
-      bonds &&
-        bonds.forEach(async bond => {
-          dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
-        });
+      await Promise.all(
+        bonds && bonds.map(bond => dispatch(calculateUserBondDetails({ address, bond, networkID, provider }))),
+      );
 
       dispatch(getBalances({ address, networkID, provider }));
     } catch (e: unknown) {
