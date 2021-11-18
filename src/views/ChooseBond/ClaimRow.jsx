@@ -10,12 +10,12 @@ import "./choosebond.scss";
 import { Skeleton } from "@material-ui/lab";
 import { useWeb3Context, useBonds } from "src/hooks";
 import { isPendingTxn, txnButtonTextGeneralPending } from "src/slices/PendingTxnsSlice";
-import { ohm_dai } from "src/helpers/AllBonds";
+import { hec_dai } from "src/helpers/AllBonds";
 
 export function ClaimBondTableData({ userBond }) {
   const dispatch = useDispatch();
   let { bonds } = useBonds();
-  bonds = bonds.concat(ohm_dai);
+  bonds = bonds.concat(hec_dai);
   const { address, chainID, provider } = useWeb3Context();
 
   const bond = userBond[1];

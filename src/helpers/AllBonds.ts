@@ -2,35 +2,22 @@ import { StableBond, LPBond, NetworkID, CustomBond, BondType } from "src/lib/Bon
 import { addresses } from "src/constants";
 
 import { ReactComponent as DaiImg } from "src/assets/tokens/DAI.svg";
-import { ReactComponent as OhmDaiImg } from "src/assets/tokens/OHM-DAI.svg";
-import { ReactComponent as FraxImg } from "src/assets/tokens/FRAX.svg";
-import { ReactComponent as OhmFraxImg } from "src/assets/tokens/OHM-FRAX.svg";
-import { ReactComponent as OhmLusdImg } from "src/assets/tokens/OHM-LUSD.svg";
-import { ReactComponent as OhmEthImg } from "src/assets/tokens/OHM-WETH.svg";
-import { ReactComponent as wETHImg } from "src/assets/tokens/wETH.svg";
-import { ReactComponent as LusdImg } from "src/assets/tokens/LUSD.svg";
+import { ReactComponent as HecDaiimg } from "src/assets/tokens/HEC-DAI.svg";
+import { ReactComponent as wFTMImg } from "src/assets/tokens/wFTM.svg";
 import { ReactComponent as UsdcImg } from "src/assets/tokens/USDC.svg";
+import { ReactComponent as MimImg } from "src/assets/tokens/mim.svg";
 import { ReactComponent as HecUsdcImg } from "src/assets/tokens/HEC-USDC.svg";
 
-import { abi as FraxOhmBondContract } from "src/abi/bonds/OhmFraxContract.json";
 import { abi as BondOhmDaiContract } from "src/abi/bonds/OhmDaiContract.json";
 import { abi as HecUsdcContract } from "src/abi/bonds/HecUsdcContract.json";
-import { abi as BondOhmLusdContract } from "src/abi/bonds/OhmLusdContract.json";
-import { abi as BondOhmEthContract } from "src/abi/bonds/OhmEthContract.json";
 
 import { abi as DaiBondContract } from "src/abi/bonds/DaiContract.json";
-import { abi as ReserveOhmLusdContract } from "src/abi/reserves/OhmLusd.json";
 import { abi as ReserveOhmDaiContract } from "src/abi/reserves/OhmDai.json";
 import { abi as ReserveHecUsdcContract } from "src/abi/reserves/HecUsdc.json";
-import { abi as ReserveOhmFraxContract } from "src/abi/reserves/OhmFrax.json";
-import { abi as ReserveOhmEthContract } from "src/abi/reserves/OhmEth.json";
 
-import { abi as FraxBondContract } from "src/abi/bonds/FraxContract.json";
-import { abi as LusdBondContract } from "src/abi/bonds/LusdContract.json";
 import { abi as EthBondContract } from "src/abi/bonds/EthContract.json";
 
 import { abi as ierc20Abi } from "src/abi/IERC20.json";
-import { getBondCalculator } from "src/helpers/BondCalculator";
 
 // TODO(zx): Further modularize by splitting up reserveAssets into vendor token definitions
 //   and include that in the definition of a bond
@@ -52,49 +39,13 @@ export const dai = new StableBond({
   },
 });
 
-export const frax = new StableBond({
-  name: "frax",
-  displayName: "FRAX",
-  bondToken: "FRAX",
-  bondIconSvg: FraxImg,
-  bondContractABI: FraxBondContract,
-  networkAddrs: {
-    [NetworkID.Mainnet]: {
-      bondAddress: "0x8510c8c2B6891E04864fa196693D44E6B6ec2514",
-      reserveAddress: "0x853d955acef822db058eb8505911ed77f175b99e",
-    },
-    [NetworkID.Testnet]: {
-      bondAddress: "0xF651283543fB9D61A91f318b78385d187D300738",
-      reserveAddress: "0x2F7249cb599139e560f0c81c269Ab9b04799E453",
-    },
-  },
-});
-
-export const lusd = new StableBond({
-  name: "lusd",
-  displayName: "LUSD",
-  bondToken: "LUSD",
-  bondIconSvg: LusdImg,
-  bondContractABI: LusdBondContract,
-  networkAddrs: {
-    [NetworkID.Mainnet]: {
-      bondAddress: "0x10C0f93f64e3C8D0a1b0f4B87d6155fd9e89D08D",
-      reserveAddress: "0x5f98805A4E8be255a32880FDeC7F6728C6568bA0",
-    },
-    [NetworkID.Testnet]: {
-      bondAddress: "0x3aD02C4E4D1234590E87A1f9a73B8E0fd8CF8CCa",
-      reserveAddress: "0x45754dF05AA6305114004358eCf8D04FF3B84e26",
-    },
-  },
-});
-
-export const eth = new CustomBond({
+export const ftm = new CustomBond({
   name: "ftm",
   displayName: "wFTM",
   lpUrl: "",
   bondType: BondType.StableAsset,
   bondToken: "WFTM",
-  bondIconSvg: wETHImg,
+  bondIconSvg: wFTMImg,
   bondContractABI: EthBondContract,
   reserveContract: ierc20Abi, // The Standard ierc20Abi since they're normal tokens
   networkAddrs: {
@@ -118,27 +69,6 @@ export const eth = new CustomBond({
   },
 });
 
-export const ohm_frax = new LPBond({
-  name: "ohm_frax_lp",
-  displayName: "OHM-FRAX LP",
-  bondToken: "FRAX",
-  bondIconSvg: OhmFraxImg,
-  bondContractABI: FraxOhmBondContract,
-  reserveContract: ReserveOhmFraxContract,
-  networkAddrs: {
-    [NetworkID.Mainnet]: {
-      bondAddress: "0xc20CffF07076858a7e642E396180EC390E5A02f7",
-      reserveAddress: "0x2dce0dda1c2f98e0f171de8333c3c6fe1bbf4877",
-    },
-    [NetworkID.Testnet]: {
-      bondAddress: "0x7BB53Ef5088AEF2Bb073D9C01DCa3a1D484FD1d2",
-      reserveAddress: "0x11BE404d7853BDE29A3e73237c952EcDCbBA031E",
-    },
-  },
-  lpUrl:
-    "https://app.uniswap.org/#/add/v2/0x853d955acef822db058eb8505911ed77f175b99e/0x5C4FDfc5233f935f20D2aDbA572F770c2E377Ab0",
-});
-
 export const usdc = new StableBond({
   name: "usdc",
   displayName: "USDC",
@@ -157,11 +87,29 @@ export const usdc = new StableBond({
   },
 });
 
-export const ohm_dai = new LPBond({
+export const mim = new StableBond({
+  name: "mim",
+  displayName: "MIM",
+  bondToken: "MIM",
+  bondIconSvg: MimImg,
+  bondContractABI: DaiBondContract,
+  networkAddrs: {
+    [NetworkID.Mainnet]: {
+      bondAddress: "0xb26be27f6f980efb07ae757d0a6a372671eacf7f",
+      reserveAddress: "0x82f0B8B456c1A451378467398982d4834b6829c1",
+    },
+    [NetworkID.Testnet]: {
+      bondAddress: "0xF651283543fB9D61A91f318b78385d187D300738",
+      reserveAddress: "0x2F7249cb599139e560f0c81c269Ab9b04799E453",
+    },
+  },
+});
+
+export const hec_dai = new LPBond({
   name: "hec_dai_lp_v1",
   displayName: "HEC-DAI LP v1",
   bondToken: "DAI",
-  bondIconSvg: OhmDaiImg,
+  bondIconSvg: HecDaiimg,
   bondContractABI: BondOhmDaiContract,
   reserveContract: ReserveOhmDaiContract,
   networkAddrs: {
@@ -182,7 +130,7 @@ export const hec_dai_v2 = new LPBond({
   name: "hec_dai_lp",
   displayName: "HEC-DAI LP v2",
   bondToken: "DAI",
-  bondIconSvg: OhmDaiImg,
+  bondIconSvg: HecDaiimg,
   bondContractABI: BondOhmDaiContract,
   reserveContract: ReserveOhmDaiContract,
   networkAddrs: {
@@ -221,59 +169,11 @@ export const hec_usdc = new LPBond({
     "https://swap.spiritswap.finance/#/add/0x04068DA6C83AFCFA0e13ba15A6696662335D5B75/0x5C4FDfc5233f935f20D2aDbA572F770c2E377Ab0",
 });
 
-export const ohm_weth = new CustomBond({
-  name: "ohm_weth_lp",
-  displayName: "OHM-WETH LP",
-  bondToken: "WETH",
-  bondIconSvg: OhmEthImg,
-  bondContractABI: BondOhmEthContract,
-  reserveContract: ReserveOhmEthContract,
-  networkAddrs: {
-    [NetworkID.Mainnet]: {
-      bondAddress: "0xB6C9dc843dEc44Aa305217c2BbC58B44438B6E16",
-      reserveAddress: "0xfffae4a0f4ac251f4705717cd24cadccc9f33e06",
-    },
-    [NetworkID.Testnet]: {
-      // NOTE (unbanksy): using ohm-dai rinkeby contracts
-      bondAddress: "0xcF449dA417cC36009a1C6FbA78918c31594B9377",
-      reserveAddress: "0x8D5a22Fb6A1840da602E56D1a260E56770e0bCE2",
-    },
-  },
-  bondType: BondType.LP,
-  lpUrl:
-    "https://spookyswap.finance/add/0x5C4FDfc5233f935f20D2aDbA572F770c2E377Ab0/0xc02aaa39b223fe8d0a0e5c4f27ead9083c756cc2",
-  customTreasuryBalanceFunc: async function (this: CustomBond, networkID, provider) {
-    if (networkID === NetworkID.Mainnet) {
-      const ethBondContract = this.getContractForBond(networkID, provider);
-      let ethPrice = await ethBondContract.assetPrice();
-      ethPrice = ethPrice / Math.pow(10, 8);
-      const token = this.getContractForReserve(networkID, provider);
-      const tokenAddress = this.getAddressForReserve(networkID);
-      const bondCalculator = getBondCalculator(networkID, provider);
-      const tokenAmount = await token.balanceOf(addresses[networkID].TREASURY_ADDRESS);
-      const valuation = await bondCalculator.valuation(tokenAddress, tokenAmount);
-      const markdown = await bondCalculator.markdown(tokenAddress);
-      let tokenUSD = (valuation / Math.pow(10, 9)) * (markdown / Math.pow(10, 18));
-      return tokenUSD * ethPrice;
-    } else {
-      // NOTE (appleseed): using OHM-DAI on rinkeby
-      const token = this.getContractForReserve(networkID, provider);
-      const tokenAddress = this.getAddressForReserve(networkID);
-      const bondCalculator = getBondCalculator(networkID, provider);
-      const tokenAmount = await token.balanceOf(addresses[networkID].TREASURY_ADDRESS);
-      const valuation = await bondCalculator.valuation(tokenAddress, tokenAmount);
-      const markdown = await bondCalculator.markdown(tokenAddress);
-      let tokenUSD = (valuation / Math.pow(10, 9)) * (markdown / Math.pow(10, 18));
-      return tokenUSD;
-    }
-  },
-});
-
 // HOW TO ADD A NEW BOND:
 // Is it a stableCoin bond? use `new StableBond`
 // Is it an LP Bond? use `new LPBond`
 // Add new bonds to this array!!
-export const allBonds = [hec_dai_v2, hec_usdc, eth, dai, usdc];
+export const allBonds = [hec_dai_v2, hec_usdc, ftm, dai, usdc, mim];
 export const allBondsMap = allBonds.reduce((prevVal, bond) => {
   return { ...prevVal, [bond.name]: bond };
 }, {});

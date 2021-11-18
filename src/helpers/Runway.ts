@@ -1,7 +1,7 @@
 import { ethers } from "ethers";
 import { addresses } from "../constants";
 import { IBaseAsyncThunk } from "../slices/interfaces";
-import { eth, hec_usdc, ohm_dai } from "./AllBonds";
+import { ftm, hec_usdc, hec_dai } from "./AllBonds";
 
 const balanceOf = {
   inputs: [{ internalType: "address", name: "", type: "address" }],
@@ -53,10 +53,10 @@ export async function calcRunway(circulatingSupply: number, { networkID, provide
   const reserves = [
     addresses[networkID].DAI_ADDRESS,
     addresses[networkID].USDC_ADDRESS,
-    eth.networkAddrs[networkID].reserveAddress,
+    ftm.networkAddrs[networkID].reserveAddress,
   ];
-  const lps = [hec_usdc.networkAddrs[networkID].reserveAddress, ohm_dai.networkAddrs[networkID].reserveAddress];
-  const wftmBondContract = new ethers.Contract(eth.networkAddrs[networkID].bondAddress, [assetPrice], provider);
+  const lps = [hec_usdc.networkAddrs[networkID].reserveAddress, hec_dai.networkAddrs[networkID].reserveAddress];
+  const wftmBondContract = new ethers.Contract(ftm.networkAddrs[networkID].bondAddress, [assetPrice], provider);
   const bondCalContract = new ethers.Contract(
     addresses[networkID].BONDINGCALC_ADDRESS1 as string,
     [getTotalValue],
@@ -70,7 +70,7 @@ export async function calcRunway(circulatingSupply: number, { networkID, provide
     const balance = await reserveContract.balanceOf(addresses[networkID].TREASURY_ADDRESS);
     const decimal = await reserveContract.decimals();
     const price =
-      reserve == eth.networkAddrs[networkID].bondAddress ? (await wftmBondContract.assetPrice()) / 10 ** 8 : 1;
+      reserve == ftm.networkAddrs[networkID].bondAddress ? (await wftmBondContract.assetPrice()) / 10 ** 8 : 1;
     const assetValue = (balance / 10 ** decimal) * price;
 
     totalValue += assetValue;
@@ -80,7 +80,7 @@ export async function calcRunway(circulatingSupply: number, { networkID, provide
     totalValue += (await bondCalContract.getTotalValue(lp)) / 10 ** 9;
   }
 
-  const rebaseRate = 0.007;
+  const rebaseRate = 0.0065;
 
   return Math.log(totalValue / circulatingSupply) / Math.log(1 + rebaseRate) / 3;
 }

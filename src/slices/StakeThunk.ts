@@ -5,7 +5,7 @@ import { abi as OlympusStaking } from "../abi/OlympusStakingv2.json";
 import { abi as StakingHelper } from "../abi/StakingHelper.json";
 import { clearPendingTxn, fetchPendingTxns, getStakingTypeText } from "./PendingTxnsSlice";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { fetchAccountSuccess, loadAccountDetails } from "./AccountSlice";
+import { fetchAccountSuccess, getBalances, loadAccountDetails } from "./AccountSlice";
 import { error, info } from "../slices/MessagesSlice";
 import { IActionValueAsyncThunk, IChangeApprovalAsyncThunk, IJsonRPCError } from "./interfaces";
 import { segmentUA } from "../helpers/userAnalyticHelpers";

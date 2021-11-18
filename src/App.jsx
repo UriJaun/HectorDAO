@@ -31,7 +31,7 @@ import { light as lightTheme } from "./themes/light.js";
 import { girth as gTheme } from "./themes/girth.js";
 import { v4 as uuidv4 } from "uuid";
 import "./style.scss";
-import { ohm_dai } from "./helpers/AllBonds";
+import { hec_dai } from "./helpers/AllBonds";
 
 // 😬 Sorry for all the console logging
 const DEBUG = false;
@@ -96,7 +96,7 @@ function App() {
   const isAppLoading = useSelector(state => state.app.loading);
   const isAppLoaded = useSelector(state => typeof state.app.marketPrice != "undefined"); // Hacky way of determining if we were able to load app Details.
   let { bonds } = useBonds();
-  bonds = bonds.concat(ohm_dai);
+  bonds = bonds.concat(hec_dai);
   async function loadDetails(whichDetails) {
     // NOTE (unbanksy): If you encounter the following error:
     // Unhandled Rejection (Error): call revert exception (method="balanceOf(address)", errorArgs=null, errorName=null, errorSignature=null, reason=null, code=CALL_EXCEPTION, version=abi/5.4.0)
@@ -216,7 +216,11 @@ function App() {
   useEffect(() => {
     if (walletChecked) {
       const updateAccountDetailInterval = setInterval(() => {
-        dispatch(loadAccountDetails({ networkID: chainID, address, provider }));
+        try {
+          dispatch(loadAccountDetails({ networkID: chainID, address, provider: loadProvider }));
+        } catch (error) {
+          console.log(error);
+        }
         bonds.map(bond => {
           dispatch(calculateUserBondDetails({ address, bond, provider, networkID: chainID }));
         });
@@ -226,7 +230,6 @@ function App() {
       };
     }
   }, [walletChecked]);
-
   return (
     <ThemeProvider theme={themeMode}>
       <CssBaseline />

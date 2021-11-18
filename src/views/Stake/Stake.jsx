@@ -147,7 +147,7 @@ function Stake() {
         provider,
         networkID: chainID,
         callback: () => (isOld ? setOldQuantity("") : setQuantity("")),
-        isOld,
+        isOld: isOld,
       }),
     );
   };
@@ -269,7 +269,7 @@ function Stake() {
                           Current Index
                         </Typography>
                         <Typography variant="h4">
-                          {currentIndex ? <>{trim(currentIndex, 1)} HEC</> : <Skeleton width="150px" />}
+                          {currentIndex ? <>{trim(currentIndex, 2)} HEC</> : <Skeleton width="150px" />}
                         </Typography>
                       </div>
                     </Grid>

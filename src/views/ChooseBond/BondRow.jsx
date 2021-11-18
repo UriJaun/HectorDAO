@@ -10,14 +10,19 @@ import useBonds from "src/hooks/Bonds";
 export function BondDataCard({ bond }) {
   const { loading } = useBonds();
   const isBondLoading = !bond.bondPrice ?? true;
-
+  const isSoldOut = bond.isSoldOut;
+  const btnVarient = isSoldOut ? "contained" : "outlined";
+  let displayName = bond.displayName;
+  if (bond.name == "mim") {
+    displayName += " (4, 4)";
+  }
   return (
     <Slide direction="up" in={true}>
       <Paper id={`${bond.name}--bond`} className="bond-data-card ohm-card">
         <div className="bond-pair">
           <BondLogo bond={bond} />
           <div className="bond-name">
-            <Typography>{bond.displayName}</Typography>
+            <Typography>{displayName}</Typography>
             {bond.isLP && (
               <div>
                 <Link href={bond.lpUrl} target="_blank">
@@ -34,13 +39,15 @@ export function BondDataCard({ bond }) {
         <div className="data-row">
           <Typography>Price</Typography>
           <Typography className="bond-price">
-            <>{isBondLoading ? <Skeleton width="50px" /> : trim(bond.bondPrice, 2)}</>
+            <>{isBondLoading ? <Skeleton width="50px" /> : isSoldOut ? "--" : trim(bond.bondPrice, 2)}</>
           </Typography>
         </div>
 
         <div className="data-row">
           <Typography>ROI</Typography>
-          <Typography>{isBondLoading ? <Skeleton width="50px" /> : `${trim(bond.bondDiscount * 100, 2)}%`}</Typography>
+          <Typography>
+            {isBondLoading ? <Skeleton width="50px" /> : isSoldOut ? "--" : `${trim(bond.bondDiscount * 100, 2)}%`}
+          </Typography>
         </div>
 
         <div className="data-row">
@@ -58,11 +65,17 @@ export function BondDataCard({ bond }) {
             )}
           </Typography>
         </div>
-        <Link component={NavLink} to={`/bonds/${bond.name}`}>
-          <Button variant="outlined" color="primary" fullWidth>
-            <Typography variant="h5">Bond {bond.displayName}</Typography>
+        {isSoldOut ? (
+          <Button variant="contained" disabled={isSoldOut} style={{ width: "100%" }}>
+            <Typography variant="h6">Sold Out</Typography>
           </Button>
-        </Link>
+        ) : (
+          <Link component={NavLink} to={`/bonds/${bond.name}`}>
+            <Button variant={btnVarient} color="primary" fullWidth>
+              <Typography variant="h6">Bond {bond.displayName}</Typography>
+            </Button>
+          </Link>
+        )}
       </Paper>
     </Slide>
   );
@@ -74,13 +87,17 @@ export function BondTableData({ bond }) {
   // const isBondLoading = useSelector(state => !state.bonding[bond]?.bondPrice ?? true);
   const isSoldOut = bond.isSoldOut;
   const btnVarient = isSoldOut ? "contained" : "outlined";
+  let displayName = bond.displayName;
+  if (bond.name == "mim") {
+    displayName += " (4, 4)";
+  }
 
   return (
     <TableRow id={`${bond.name}--bond`}>
       <TableCell align="left" className="bond-name-cell">
         <BondLogo bond={bond} />
         <div className="bond-name">
-          <Typography variant="body1">{bond.displayName}</Typography>
+          <Typography variant="body1">{displayName}</Typography>
           {bond.isLP && (
             <Link color="primary" href={bond.lpUrl} target="_blank">
               <Typography variant="body1">

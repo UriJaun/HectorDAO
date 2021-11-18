@@ -187,7 +187,7 @@ function TreasuryDashboard() {
                 </Typography>
               </Box>
 
-              <Box className="metric runway">
+              {/* <Box className="metric runway">
                 <Typography variant="h6" color="textSecondary">
                   Runway
                   <InfoTooltip
@@ -199,7 +199,7 @@ function TreasuryDashboard() {
                 <Typography variant="h5">
                   {runwayValue ? trim(runwayValue, 0) + " days" : <Skeleton type="text" />}
                 </Typography>
-              </Box>
+              </Box> */}
             </Box>
           </Paper>
         </Box>
@@ -308,7 +308,7 @@ function TreasuryDashboard() {
               </Paper>
             </Grid>
 
-            <Grid item lg={6} md={6} sm={12} xs={12}>
+            {/* <Grid item lg={6} md={6} sm={12} xs={12}>
               <Paper className="ohm-card">
                 <Chart
                   type="line"
@@ -327,7 +327,7 @@ function TreasuryDashboard() {
                   expandedGraphStrokeColor={theme.palette.graphStrokeColor}
                 />
               </Paper>
-            </Grid>
+            </Grid> */}
 
             <Grid item lg={6} md={6} sm={12} xs={12}>
               <Paper className="ohm-card">

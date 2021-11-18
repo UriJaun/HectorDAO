@@ -223,7 +223,8 @@ export const bondAsset = createAsyncThunk(
       await bondTx.wait();
       // TODO: it may make more sense to only have it in the finally.
       // UX preference (show pending after txn complete or after balance updated)
-      await dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
+
+      dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
     } catch (e: unknown) {
       const rpcError = e as IJsonRPCError;
       if (rpcError.code === -32603 && rpcError.message.indexOf("ds-math-sub-underflow") >= 0) {
@@ -270,6 +271,8 @@ export const redeemBond = createAsyncThunk(
 
       await redeemTx.wait();
       await dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
+
+      dispatch(getBalances({ address, networkID, provider }));
     } catch (e: unknown) {
       uaData.approved = false;
       dispatch(error((e as IJsonRPCError).message));
@@ -306,9 +309,12 @@ export const redeemAllBonds = createAsyncThunk(
 
       await redeemAllTx.wait();
 
-      await Promise.all(
-        bonds && bonds.map(bond => dispatch(calculateUserBondDetails({ address, bond, networkID, provider }))),
-      );
+      bonds &&
+        bonds.forEach(async bond => {
+          dispatch(calculateUserBondDetails({ address, bond, networkID, provider }));
+        });
+
+      dispatch(getBalances({ address, networkID, provider }));
     } catch (e: unknown) {
       dispatch(error((e as IJsonRPCError).message));
     } finally {

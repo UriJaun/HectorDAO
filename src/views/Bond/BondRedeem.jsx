@@ -47,6 +47,13 @@ function BondRedeem({ bond }) {
     console.log(bondDetails);
   }, []);
 
+  let isFour = false;
+  let reward = "HEC";
+  if (bond.name == "mim") {
+    isFour = true;
+    reward = "sHEC";
+  }
+
   return (
     <Box display="flex" flexDirection="column">
       <Box display="flex" justifyContent="space-around" flexWrap="wrap">
@@ -63,21 +70,23 @@ function BondRedeem({ bond }) {
         >
           {txnButtonText(pendingTransactions, "redeem_bond_" + bond.name, "Claim")}
         </Button>
-        <Button
-          variant="contained"
-          color="primary"
-          id="bond-claim-autostake-btn"
-          className="transaction-button"
-          fullWidth
-          disabled={
-            isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name + "_autostake") || bond.pendingPayout == 0.0
-          }
-          onClick={() => {
-            onRedeem({ autostake: true });
-          }}
-        >
-          {txnButtonText(pendingTransactions, "redeem_bond_" + bond.name + "_autostake", "Claim and Autostake")}
-        </Button>
+        {!isFour && (
+          <Button
+            variant="contained"
+            color="primary"
+            id="bond-claim-autostake-btn"
+            className="transaction-button"
+            fullWidth
+            disabled={
+              isPendingTxn(pendingTransactions, "redeem_bond_" + bond.name + "_autostake") || bond.pendingPayout == 0.0
+            }
+            onClick={() => {
+              onRedeem({ autostake: true });
+            }}
+          >
+            {txnButtonText(pendingTransactions, "redeem_bond_" + bond.name + "_autostake", "Claim and Autostake")}
+          </Button>
+        )}
       </Box>
 
       <Slide direction="right" in={true} mountOnEnter unmountOnExit {...{ timeout: 533 }}>
@@ -85,13 +94,13 @@ function BondRedeem({ bond }) {
           <div className="data-row">
             <Typography>Pending Rewards</Typography>
             <Typography className="price-data">
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.interestDue, 4)} HEC`}
+              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.interestDue, 4)} ${reward}`}
             </Typography>
           </div>
           <div className="data-row">
             <Typography>Claimable Rewards</Typography>
             <Typography className="price-data">
-              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.pendingPayout, 4)} HEC`}
+              {isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.pendingPayout, 4)} ${reward}`}
             </Typography>
           </div>
           <div className="data-row">

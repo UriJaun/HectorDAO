@@ -138,6 +138,15 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
   if (bond.name == "hec_usdc_lp") {
     balance = new Intl.NumberFormat("en-US", { notation: "scientific" }).format(bond.balance);
   }
+  let reward;
+  let displayName;
+  if (bond.name == "mim") {
+    reward = "sHEC";
+    displayName = bond.displayName + " (4, 4)";
+  } else {
+    reward = "HEC";
+    displayName = bond.displayName;
+  }
 
   return (
     <Box display="flex" flexDirection="column">
@@ -154,8 +163,8 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
               <div className="help-text">
                 <em>
                   <Typography variant="body1" align="center" color="textSecondary">
-                    First time bonding <b>{bond.displayName}</b>? <br /> Please approve Hector Dao to use your{" "}
-                    <b>{bond.displayName}</b> for bonding.
+                    First time bonding <b>{displayName}</b>? <br /> Please approve Hector Dao to use your{" "}
+                    <b>{displayName}</b> for bonding.
                   </Typography>
                 </em>
               </div>
@@ -228,7 +237,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
               {isSoldOut ? (
                 "0 HEC"
               ) : (
-                <>{isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.bondQuote, 4) || "0"} HEC`}</>
+                <>{isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.bondQuote, 4) || "0"} ${reward}`}</>
               )}
             </Typography>
           </div>
@@ -246,7 +255,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
               {isSoldOut ? (
                 "--"
               ) : (
-                <>{isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.bondDiscount, 4) || "0"} %`}</>
+                <>{isBondLoading ? <Skeleton width="100px" /> : `${trim(bond.bondDiscount * 100, 4) || "0"} %`}</>
               )}
             </Typography>
           </div>

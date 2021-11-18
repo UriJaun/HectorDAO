@@ -24,6 +24,10 @@ function BondHeader({ bond, slippage, recipientAddress, onRecipientAddressChange
     if (open) handleClose;
     else history.push("/bonds");
   });
+  let displayName = bond.displayName;
+  if (bond.name == "mim") {
+    displayName += " (4, 4)";
+  }
 
   return (
     <div className="bond-header">
@@ -34,7 +38,7 @@ function BondHeader({ bond, slippage, recipientAddress, onRecipientAddressChange
       <div className="bond-header-logo">
         <BondLogo bond={bond} />
         <div className="bond-header-name">
-          <Typography variant="h5">{bond.displayName}</Typography>
+          <Typography variant="h5">{displayName}</Typography>
         </div>
       </div>
 
