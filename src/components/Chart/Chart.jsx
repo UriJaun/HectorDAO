@@ -166,18 +166,21 @@ const renderStackedAreaChart = (
       stroke={stroke ? stroke[0] : "none"}
       fill={`url(#color-${dataKey[0]})`}
       fillOpacity={1}
+      stackId="1"
     />
     <Area
       dataKey={dataKey[1]}
       stroke={stroke ? stroke[1] : "none"}
       fill={`url(#color-${dataKey[1]})`}
       fillOpacity={1}
+      stackId="1"
     />
     <Area
       dataKey={dataKey[2]}
       stroke={stroke ? stroke[2] : "none"}
       fill={`url(#color-${dataKey[2]})`}
       fillOpacity={1}
+      stackId="1"
     />
     {renderExpandedChartStroke(isExpanded, expandedGraphStrokeColor)}
   </AreaChart>
