@@ -271,7 +271,7 @@ function TreasuryDashboard() {
             </Grid>
 
             <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card">
+              <Paper className="ohm-card ohm-chart-card">
                 <Chart
                   type="area"
                   data={data}
@@ -291,7 +291,7 @@ function TreasuryDashboard() {
             </Grid>
 
             <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card">
+              <Paper className="ohm-card ohm-chart-card">
                 <Chart
                   type="area"
                   data={staked}
@@ -330,7 +330,7 @@ function TreasuryDashboard() {
             </Grid> */}
 
             <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card">
+              <Paper className="ohm-card ohm-chart-card">
                 <Chart
                   type="line"
                   data={runway}

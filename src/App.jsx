@@ -216,7 +216,7 @@ function App() {
   useEffect(() => {
     if (walletChecked) {
       const updateAccountDetailInterval = setInterval(() => {
-        dispatch(loadAccountDetails({ networkID: chainID, address, provider: loadProvider }));
+        dispatch(loadAccountDetails({ networkID: chainID, address, provider: provider }));
         bonds.map(bond => {
           dispatch(calculateUserBondDetails({ address, bond, provider, networkID: chainID }));
         });

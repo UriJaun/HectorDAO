@@ -83,9 +83,12 @@ export function BondDataCard({ bond }) {
 
 export function BondTableData({ bond }) {
   // Use BondPrice as indicator of loading.
-  const isBondLoading = !bond.bondPrice ?? true;
+  let isBondLoading = !bond.bondPrice ?? true;
   // const isBondLoading = useSelector(state => !state.bonding[bond]?.bondPrice ?? true);
   const isSoldOut = bond.isSoldOut;
+  if (isSoldOut) {
+    isBondLoading = false;
+  }
   const btnVarient = isSoldOut ? "contained" : "outlined";
   let displayName = bond.displayName;
   if (bond.name == "mim") {
