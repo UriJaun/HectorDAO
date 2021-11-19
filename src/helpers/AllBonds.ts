@@ -173,7 +173,7 @@ export const hec_usdc = new LPBond({
 // Is it a stableCoin bond? use `new StableBond`
 // Is it an LP Bond? use `new LPBond`
 // Add new bonds to this array!!
-export const allBonds = [hec_dai_v2, hec_usdc, ftm, dai, usdc];
+export const allBonds = [hec_dai_v2, hec_usdc, ftm, dai, usdc, mim];
 export const allBondsMap = allBonds.reduce((prevVal, bond) => {
   return { ...prevVal, [bond.name]: bond };
 }, {});

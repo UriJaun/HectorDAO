@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { shorten, trim, prettyVestingPeriod } from "../../helpers";
 import { redeemBond } from "../../slices/BondSlice";
+import { info, error } from "../../slices/MessagesSlice";
 import BondLogo from "../../components/BondLogo";
 import { Box, Button, Link, Paper, Typography, TableRow, TableCell, SvgIcon, Slide } from "@material-ui/core";
 import { ReactComponent as ArrowUp } from "../../assets/icons/arrow-up.svg";
@@ -37,7 +38,11 @@ export function ClaimBondTableData({ userBond }) {
 
   async function onRedeem({ autostake }) {
     let currentBond = bonds.find(bnd => bnd.name === bondName);
-    await dispatch(redeemBond({ address, bond: currentBond, networkID: chainID, provider, autostake }));
+    if (currentBond.name == "mim" && vestingPeriod() !== "Fully Vested") {
+      dispatch(info("You need to wait for the bonds to be fully vested."));
+    } else {
+      await dispatch(redeemBond({ address, bond: currentBond, networkID: chainID, provider, autostake }));
+    }
   }
 
   return (
