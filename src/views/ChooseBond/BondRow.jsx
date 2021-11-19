@@ -1,3 +1,4 @@
+import { useSelector } from "react-redux";
 import { trim } from "../../helpers";
 import BondLogo from "../../components/BondLogo";
 import { Box, Button, Link, Paper, Typography, TableRow, TableCell, SvgIcon, Slide } from "@material-ui/core";
@@ -13,9 +14,15 @@ export function BondDataCard({ bond }) {
   const isSoldOut = bond.isSoldOut;
   const btnVarient = isSoldOut ? "contained" : "outlined";
   let displayName = bond.displayName;
+  let isFour = false;
   if (bond.name == "mim") {
     displayName += " (4, 4)";
+    isFour = true;
   }
+  const stakingRebase = useSelector(state => {
+    return state.app.stakingRebase;
+  });
+  const stakingRebasePercentage = trim(stakingRebase * 1200, 2);
   return (
     <Slide direction="up" in={true}>
       <Paper id={`${bond.name}--bond`} className="bond-data-card ohm-card">
@@ -47,6 +54,11 @@ export function BondDataCard({ bond }) {
           <Typography>ROI</Typography>
           <Typography>
             {isBondLoading ? <Skeleton width="50px" /> : isSoldOut ? "--" : `${trim(bond.bondDiscount * 100, 2)}%`}
+            {isFour && !isBondLoading && (
+              <Typography variant="body2" style={{ color: "#ff9900", fontSize: "11px", paddingTop: "4px" }}>
+                + {stakingRebasePercentage}% Rebase
+              </Typography>
+            )}
           </Typography>
         </div>
 
@@ -91,10 +103,15 @@ export function BondTableData({ bond }) {
   }
   const btnVarient = isSoldOut ? "contained" : "outlined";
   let displayName = bond.displayName;
+  let isFour = false;
   if (bond.name == "mim") {
     displayName += " (4, 4)";
+    isFour = true;
   }
-
+  const stakingRebase = useSelector(state => {
+    return state.app.stakingRebase;
+  });
+  const stakingRebasePercentage = trim(stakingRebase * 1200, 2);
   return (
     <TableRow id={`${bond.name}--bond`}>
       <TableCell align="left" className="bond-name-cell">
@@ -125,6 +142,11 @@ export function BondTableData({ bond }) {
       </TableCell>
       <TableCell align="left">
         {isSoldOut ? "--" : <>{isBondLoading ? <Skeleton /> : `${trim(bond.bondDiscount * 100, 2)}%`}</>}
+        {isFour && !isBondLoading && (
+          <Typography variant="body2" style={{ color: "#ff9900", fontSize: "11px", paddingTop: "4px" }}>
+            + {stakingRebasePercentage}% Rebase
+          </Typography>
+        )}
       </TableCell>
       <TableCell align="right">
         {isBondLoading ? (
