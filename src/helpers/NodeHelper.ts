@@ -26,95 +26,10 @@ export class NodeHelper {
 
   static currentRemovedNodes = JSON.parse(NodeHelper._storage.getItem(NodeHelper._invalidNodesKey) || "{}");
   static currentRemovedNodesURIs = Object.keys(NodeHelper.currentRemovedNodes);
-
-  /**
-   * remove the invalidNodes list entirely
-   * should be used as a failsafe IF we have invalidated ALL nodes AND we have no fallbacks
-   */
-  static _emptyInvalidNodesList() {
-    // if all nodes are removed && there are no fallbacks, then empty the list
-    if (
-      EnvHelper.getFallbackURIs().length === 0 &&
-      Object.keys(NodeHelper.currentRemovedNodes).length === EnvHelper.getAPIUris().length
-    ) {
-      NodeHelper._storage.removeItem(NodeHelper._invalidNodesKey);
-    }
-  }
-
-  static _updateConnectionStatsForProvider(currentStats: ICurrentStats) {
-    const failedAt = new Date().getTime();
-    const failedConnectionCount = currentStats.failedConnectionCount || 0;
-    if (
-      failedConnectionCount > 0 &&
-      currentStats.lastFailedConnectionAt > minutesAgo(NodeHelper._failedConnectionsMinutesLimit)
-    ) {
-      // more than 0 failed connections in the last (15) minutes
-      currentStats = {
-        lastFailedConnectionAt: failedAt,
-        failedConnectionCount: failedConnectionCount + 1,
-      };
-    } else {
-      currentStats = {
-        lastFailedConnectionAt: failedAt,
-        failedConnectionCount: 1,
-      };
-    }
-    return currentStats;
-  }
-
-  static _removeNodeFromProviders(providerKey: string, providerUrl: string) {
-    // get Object of current removed Nodes
-    // key = providerUrl, value = removedAt Timestamp
-    let currentRemovedNodesObj = NodeHelper.currentRemovedNodes;
-    if (Object.keys(currentRemovedNodesObj).includes(providerUrl)) {
-      // already on the removed nodes list
-    } else {
-      // add to list
-      currentRemovedNodesObj[providerUrl] = new Date().getTime();
-      NodeHelper._storage.setItem(NodeHelper._invalidNodesKey, JSON.stringify(currentRemovedNodesObj));
-      // remove connection stats for this Node
-      NodeHelper._storage.removeItem(providerKey);
-    }
-
-    // will only empty if no Fallbacks are provided
-    NodeHelper._emptyInvalidNodesList();
-  }
-
-  /**
-   * adds a bad connection stat to NodeHelper._storage for a given node
-   * if greater than `_maxFailedConnections` previous failures in last `_failedConnectionsMinuteLimit` minutes will remove node from list
-   * @param provider an Ethers provider
-   */
-  static logBadConnectionWithTimer(providerUrl: string) {
-    const providerKey: string = "-nodeHelper:" + providerUrl;
-
-    let currentConnectionStats = JSON.parse(NodeHelper._storage.getItem(providerKey) || "{}");
-    currentConnectionStats = NodeHelper._updateConnectionStatsForProvider(currentConnectionStats);
-
-    if (currentConnectionStats.failedConnectionCount > NodeHelper._maxFailedConnections) {
-      // then remove this node from our provider list for 24 hours
-      NodeHelper._removeNodeFromProviders(providerKey, providerUrl);
-    } else {
-      NodeHelper._storage.setItem(providerKey, JSON.stringify(currentConnectionStats));
-    }
-  }
-
   /**
    * returns Array of APIURIs where NOT on invalidNodes list
    */
   static getNodesUris = () => {
-    // let allURIs = EnvHelper.getAPIUris();
-    // let invalidNodes = NodeHelper.currentRemovedNodesURIs;
-    // // filter invalidNodes out of allURIs
-    // // this allows duplicates in allURIs, removes both if invalid, & allows both if valid
-    // allURIs = allURIs.filter(item => !invalidNodes.includes(item));
-
-    // // return the remaining elements
-    // if (allURIs.length === 0) {
-    //   // the invalidNodes list will be emptied when the user starts a new session
-    //   // In the meantime use the fallbacks
-    //   allURIs = EnvHelper.getFallbackURIs();
-    // }
     let allURIs = ["https://rpc.ftm.tools"];
     return allURIs;
   };

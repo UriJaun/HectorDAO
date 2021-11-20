@@ -25,7 +25,7 @@ export function BondDataCard({ bond }) {
   const stakingRebasePercentage = trim(stakingRebase * 1200, 2);
   return (
     <Slide direction="up" in={true}>
-      <Paper id={`${bond.name}--bond`} className="bond-data-card ohm-card">
+      <Paper id={`${bond.name}--bond`} className="bond-data-card hec-card">
         <div className="bond-pair">
           <BondLogo bond={bond} />
           <div className="bond-name">

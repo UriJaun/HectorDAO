@@ -5,8 +5,8 @@ import { abi as PairContract } from "../abi/PairContract.json";
 import { abi as RedeemHelperAbi } from "../abi/RedeemHelper.json";
 
 import { SvgIcon } from "@material-ui/core";
-import { ReactComponent as OhmImg } from "../assets/tokens/token_OHM.svg";
-import { ReactComponent as SOhmImg } from "../assets/tokens/token_sOHM.svg";
+import { ReactComponent as HecImg } from "../assets/tokens/HEC.svg";
+import { ReactComponent as SHecImg } from "../assets/tokens/SHEC.svg";
 
 import { hec_dai } from "./AllBonds";
 import { JsonRpcSigner, StaticJsonRpcProvider } from "@ethersproject/providers";
@@ -14,8 +14,8 @@ import { IBaseAsyncThunk } from "src/slices/interfaces";
 
 // NOTE (appleseed): this looks like an outdated method... we now have this data in the graph (used elsewhere in the app)
 export async function getMarketPrice({ networkID, provider }: IBaseAsyncThunk) {
-  const ohm_dai_address = hec_dai.getAddressForReserve(networkID);
-  const pairContract = new ethers.Contract(ohm_dai_address, PairContract, provider);
+  const hec_dai_address = hec_dai.getAddressForReserve(networkID);
+  const pairContract = new ethers.Contract(hec_dai_address, PairContract, provider);
   const reserves = await pairContract.getReserves();
   const marketPrice = reserves[1] / reserves[0];
 
@@ -23,7 +23,7 @@ export async function getMarketPrice({ networkID, provider }: IBaseAsyncThunk) {
   return marketPrice;
 }
 
-export async function getTokenPrice(tokenId = "olympus") {
+export async function getTokenPrice(tokenId = "hector") {
   const resp = await axios.get(`https://api.coingecko.com/api/v3/simple/price?ids=${tokenId}&vs_currencies=usd`);
   let tokenPrice: number = resp.data[tokenId].usd;
   return tokenPrice;
@@ -100,21 +100,6 @@ export function prettifySeconds(seconds: number, resolution?: string) {
   }
 
   return result;
-}
-
-function getSohmTokenImage() {
-  return <SvgIcon component={SOhmImg} viewBox="0 0 100 100" style={{ height: "1rem", width: "1rem" }} />;
-}
-
-export function getOhmTokenImage(w?: number, h?: number) {
-  const height = h == null ? "32px" : `${h}px`;
-  const width = w == null ? "32px" : `${w}px`;
-  return <SvgIcon component={OhmImg} viewBox="0 0 32 32" style={{ height, width }} />;
-}
-
-export function getTokenImage(name: string) {
-  if (name === "ohm") return getOhmTokenImage();
-  if (name === "sohm") return getSohmTokenImage();
 }
 
 // TS-REFACTOR-NOTE - Used for:

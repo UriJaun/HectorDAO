@@ -17,7 +17,7 @@ const useStyles = makeStyles(theme => ({
   },
 }));
 
-function OhmSnackbar({ message, duration, severity }) {
+function HecSnackbar({ message, duration, severity }) {
   const classes = useStyles();
   const [open, setOpen] = useState(true);
 
@@ -41,17 +41,17 @@ function OhmSnackbar({ message, duration, severity }) {
   );
 }
 
-export const ohmToast = {
+export const hecToast = {
   success: message => {
-    OhmSnackbar(message, null, "success");
+    HecSnackbar(message, null, "success");
   },
   error: message => {
-    OhmSnackbar(message, null, "error");
+    HecSnackbar(message, null, "error");
   },
   info: message => {
-    OhmSnackbar(message, null, "info");
+    HecSnackbar(message, null, "info");
   },
   warn: message => {
-    OhmSnackbar(message, null, "warning");
+    HecSnackbar(message, null, "warning");
   },
 };

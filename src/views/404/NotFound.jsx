@@ -1,4 +1,4 @@
-import OlympusLogo from "../../assets/Olympus Logo.svg";
+import HectorIcon from "../../assets/icons/hector-nav-header.svg";
 import "./notfound.scss";
 
 export default function NotFound() {
@@ -6,10 +6,10 @@ export default function NotFound() {
     <div id="not-found">
       <div className="not-found-header">
         <a href="https://app.hectordao.com" target="_blank">
-          <img className="branding-header-icon" src={OlympusLogo} alt="HectorDAO" />
+          <img className="branding-header-icon" src={HectorIcon} alt="HectorDAO" />
         </a>
 
-        <h4>Page not found</h4>
+        <h2 style={{ textAlign: "center" }}>Page not found</h2>
       </div>
     </div>
   );

@@ -18,7 +18,7 @@ import { loadAppDetails } from "./slices/AppSlice";
 import { loadAccountDetails, calculateUserBondDetails } from "./slices/AccountSlice";
 import { info } from "./slices/MessagesSlice";
 
-import { Stake, ChooseBond, Bond, Dashboard, TreasuryDashboard, PoolTogether } from "./views";
+import { Stake, ChooseBond, Bond, TreasuryDashboard } from "./views";
 import Sidebar from "./components/Sidebar/Sidebar.jsx";
 import TopBar from "./components/TopBar/TopBar.jsx";
 import NavDrawer from "./components/Sidebar/NavDrawer.jsx";
@@ -147,13 +147,6 @@ function App() {
       // then user DOES have a wallet
       connect().then(() => {
         setWalletChecked(true);
-        const providerURL = uri;
-        // Note (appleseed): remove this before merge to develop
-        // segmentUA({
-        //   type: "connect",
-        //   provider: provider,
-        //   context: currentPath,
-        // });
       });
     } else {
       // then user DOES NOT have a wallet
@@ -253,10 +246,6 @@ function App() {
 
             <Route path="/stake">
               <Stake />
-            </Route>
-
-            <Route path="/33-together">
-              <PoolTogether />
             </Route>
 
             <Route path="/bonds">

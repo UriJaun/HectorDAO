@@ -12,7 +12,7 @@ import { error } from "src/slices/MessagesSlice";
  * @returns string
  */
 function getTestnetURI() {
-  return EnvHelper.alchemyTestnetURI;
+  return "";
 }
 
 /**
@@ -31,12 +31,8 @@ const ALL_URIs = NodeHelper.getNodesUris();
 function getMainnetURI(): string {
   // Shuffles the URIs for "intelligent" loadbalancing
   const allURIs = ALL_URIs.sort(() => Math.random() - 0.5);
-
-  // There is no lightweight way to test each URL. so just return a random one.
-  // if (workingURI !== undefined || workingURI !== "") return workingURI as string;
   const randomIndex = Math.floor(Math.random() * allURIs.length);
   return allURIs[randomIndex];
-  // return "https://rpc.ankr.com/fantom";
 }
 
 /*
@@ -96,7 +92,6 @@ export const Web3ContextProvider: React.FC<{ children: ReactElement }> = ({ chil
           options: {
             rpc: {
               250: getMainnetURI(),
-              4: getTestnetURI(),
             },
           },
         },

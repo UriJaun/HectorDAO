@@ -46,7 +46,7 @@ function TreasuryDashboard() {
   const rebase = useSelector(state => {
     return state.app.stakingRebase;
   });
-  const backingPerOhm = useSelector(state => {
+  const backingPerHec = useSelector(state => {
     if (state.bonding.loading === false) {
       let tokenBalances = 0;
       for (const bond in allBondsMap) {
@@ -58,9 +58,7 @@ function TreasuryDashboard() {
     }
   });
 
-  const runwayValue = Math.log(backingPerOhm) / Math.log(1 + rebase) / 3;
-
-  const wsOhmPrice = useSelector(state => {
+  const wsHecPrice = useSelector(state => {
     return state.app.marketPrice * state.app.currentIndex;
   });
 
@@ -93,16 +91,6 @@ function TreasuryDashboard() {
 
       setApy(apy);
     });
-    // apollo(rebasesV2DataQuery).then(r => {
-    //   let apy = r.data.rebases.map(entry => ({
-    //     apy: Math.pow(parseFloat(entry.percentage) + 1, 365 * 3) * 100,
-    //     timestamp: entry.timestamp - (entry.timestamp % (3600 * 4)),
-    //   }));
-    //
-    //   apy = apy.filter(pm => pm.apy < 5000000);
-    //
-    //   setApy(apy);
-    // });
   }, []);
 
   return (
@@ -114,7 +102,7 @@ function TreasuryDashboard() {
         }}
       >
         <Box className={`hero-metrics`}>
-          <Paper className="ohm-card">
+          <Paper className="hec-card">
             <Box display="flex" flexWrap="wrap" justifyContent="space-between" alignItems="center">
               <Box className="metric market">
                 <Typography variant="h6" color="textSecondary">
@@ -147,7 +135,7 @@ function TreasuryDashboard() {
                 </Typography>
 
                 <Typography variant="h5">
-                  {wsOhmPrice ? formatCurrency(wsOhmPrice, 2) : <Skeleton type="text" />}
+                  {wsHecPrice ? formatCurrency(wsHecPrice, 2) : <Skeleton type="text" />}
                 </Typography>
               </Box>
 
@@ -169,7 +157,7 @@ function TreasuryDashboard() {
                   Backing per HEC
                 </Typography>
                 <Typography variant="h5">
-                  {backingPerOhm ? formatCurrency(backingPerOhm, 2) : <Skeleton type="text" />}
+                  {backingPerHec ? formatCurrency(backingPerHec, 2) : <Skeleton type="text" />}
                 </Typography>
               </Box>
 
@@ -186,20 +174,6 @@ function TreasuryDashboard() {
                   {currentIndex ? trim(currentIndex, 2) + " sHEC" : <Skeleton type="text" />}
                 </Typography>
               </Box>
-
-              {/* <Box className="metric runway">
-                <Typography variant="h6" color="textSecondary">
-                  Runway
-                  <InfoTooltip
-                    message={
-                      "Runway, is the number of days sHEC emissions can be sustained at a given rate. Lower APY = longer runway"
-                    }
-                  />
-                </Typography>
-                <Typography variant="h5">
-                  {runwayValue ? trim(runwayValue, 0) + " days" : <Skeleton type="text" />}
-                </Typography>
-              </Box> */}
             </Box>
           </Paper>
         </Box>
@@ -207,7 +181,7 @@ function TreasuryDashboard() {
         <Zoom in={true}>
           <Grid container spacing={2} className="data-grid">
             <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card ohm-chart-card">
+              <Paper className="hec-card hec-chart-card">
                 <Chart
                   type="area"
                   data={data}
@@ -225,7 +199,7 @@ function TreasuryDashboard() {
             </Grid>
 
             <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card ohm-chart-card">
+              <Paper className="hec-card hec-chart-card">
                 <Chart
                   type="stack"
                   data={data}
@@ -247,7 +221,7 @@ function TreasuryDashboard() {
             </Grid>
 
             <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card ohm-chart-card">
+              <Paper className="hec-card hec-chart-card">
                 <Chart
                   type="stack"
                   data={data}
@@ -271,7 +245,7 @@ function TreasuryDashboard() {
             </Grid>
 
             <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card ohm-chart-card">
+              <Paper className="hec-card hec-chart-card">
                 <Chart
                   type="area"
                   data={data}
@@ -291,7 +265,7 @@ function TreasuryDashboard() {
             </Grid>
 
             <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card ohm-chart-card">
+              <Paper className="hec-card hec-chart-card">
                 <Chart
                   type="area"
                   data={staked}
@@ -308,29 +282,8 @@ function TreasuryDashboard() {
               </Paper>
             </Grid>
 
-            {/* <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card">
-                <Chart
-                  type="line"
-                  scale="log"
-                  data={apy}
-                  dataKey={["apy"]}
-                  color={theme.palette.text.primary}
-                  stroke={[theme.palette.text.primary]}
-                  headerText="APY over time"
-                  dataFormat="percent"
-                  headerSubText={`${apy.length && trim(apy[0].apy, 2)}%`}
-                  bulletpointColors={bulletpoints.apy}
-                  itemNames={tooltipItems.apy}
-                  itemType={itemType.percentage}
-                  infoTooltipMessage={tooltipInfoMessages.apy}
-                  expandedGraphStrokeColor={theme.palette.graphStrokeColor}
-                />
-              </Paper>
-            </Grid> */}
-
             <Grid item lg={6} md={6} sm={12} xs={12}>
-              <Paper className="ohm-card ohm-chart-card">
+              <Paper className="hec-card hec-chart-card">
                 <Chart
                   type="line"
                   data={runway}

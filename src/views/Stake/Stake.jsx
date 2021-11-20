@@ -18,14 +18,13 @@ import {
 import NewReleases from "@material-ui/icons/NewReleases";
 import RebaseTimer from "../../components/RebaseTimer/RebaseTimer";
 import TabPanel from "../../components/TabPanel";
-import { getOhmTokenImage, getTokenImage, trim } from "../../helpers";
+import { trim } from "../../helpers";
 import { changeApproval, changeStake } from "../../slices/StakeThunk";
 import useMediaQuery from "@material-ui/core/useMediaQuery";
 import "./stake.scss";
 import { useWeb3Context } from "src/hooks/web3Context";
 import { isPendingTxn, txnButtonText } from "src/slices/PendingTxnsSlice";
 import { Skeleton } from "@material-ui/lab";
-import ExternalStakePool from "./ExternalStakePool";
 import { error } from "../../slices/MessagesSlice";
 import { ethers, BigNumber } from "ethers";
 
@@ -35,9 +34,6 @@ function a11yProps(index) {
     "aria-controls": `simple-tabpanel-${index}`,
   };
 }
-
-const sOhmImg = getTokenImage("sohm");
-const ohmImg = getOhmTokenImage(16, 16);
 
 function Stake() {
   const dispatch = useDispatch();
@@ -59,26 +55,20 @@ function Stake() {
   const oldfiveDayRate = useSelector(state => {
     return state.app.old_fiveDayRate;
   });
-  const ohmBalance = useSelector(state => {
-    return state.account.balances && state.account.balances.ohm;
-  });
-  const oldSohmBalance = useSelector(state => {
-    return state.account.balances && state.account.balances.oldsohm;
+  const hecBalance = useSelector(state => {
+    return state.account.balances && state.account.balances.hec;
   });
   const shecBalance = useSelector(state => {
-    return state.account.balances && state.account.balances.sohm;
+    return state.account.balances && state.account.balances.shec;
   });
   const oldshecBalance = useSelector(state => {
     return state.account.balances && state.account.balances.oldshec;
   });
-  const wsohmBalance = useSelector(state => {
-    return state.account.balances && state.account.balances.wsohm;
-  });
   const stakeAllowance = useSelector(state => {
-    return state.account.staking && state.account.staking.ohmStake;
+    return state.account.staking && state.account.staking.hecStake;
   });
   const unstakeAllowance = useSelector(state => {
-    return state.account.staking && state.account.staking.ohmUnstake;
+    return state.account.staking && state.account.staking.hecUnstake;
   });
   const oldunstakeAllowance = useSelector(state => {
     return state.account.staking && state.account.staking.oldhecUnstake;
@@ -102,7 +92,7 @@ function Stake() {
 
   const setMax = () => {
     if (view === 0) {
-      setQuantity(ohmBalance);
+      setQuantity(hecBalance);
     } else {
       setQuantity(shecBalance);
     }
@@ -132,7 +122,7 @@ function Stake() {
 
     // 1st catch if quantity > balance
     let gweiValue = ethers.utils.parseUnits(value, "gwei");
-    if (action === "stake" && gweiValue.gt(ethers.utils.parseUnits(ohmBalance, "gwei"))) {
+    if (action === "stake" && gweiValue.gt(ethers.utils.parseUnits(hecBalance, "gwei"))) {
       return dispatch(error("You cannot stake more than your HEC balance."));
     }
 
@@ -154,8 +144,8 @@ function Stake() {
 
   const hasAllowance = useCallback(
     token => {
-      if (token === "ohm") return stakeAllowance > 0;
-      if (token === "sohm") return unstakeAllowance > 0;
+      if (token === "hec") return stakeAllowance > 0;
+      if (token === "shec") return unstakeAllowance > 0;
       if (token === "oldshec") return oldunstakeAllowance > 0;
       return 0;
     },
@@ -177,14 +167,14 @@ function Stake() {
   };
 
   const trimmedBalance = Number(
-    [shecBalance, wsohmBalance]
+    [shecBalance]
       .filter(Boolean)
       .map(balance => Number(balance))
       .reduce((a, b) => a + b, 0)
       .toFixed(4),
   );
   const oldtrimmedBalance = Number(
-    [oldshecBalance, wsohmBalance]
+    [oldshecBalance]
       .filter(Boolean)
       .map(balance => Number(balance))
       .reduce((a, b) => a + b, 0)
@@ -195,33 +185,17 @@ function Stake() {
   const oldstakingRebasePercentage = trim(oldstakingRebase * 100, 4);
   const nextRewardValue = trim((stakingRebasePercentage / 100) * trimmedBalance, 4);
   const oldnextRewardValue = trim((oldstakingRebasePercentage / 100) * oldtrimmedBalance, 4);
-  // const preApy = stakingAPY && stakingAPY.toString().split("e+")[0].substring(0, 3);
-  // const afterApy = stakingAPY && stakingAPY.toString().split("e+")[1];
-  // const tempApy = stakingAPY && preApy.concat("e+").concat(afterApy);
 
   return (
     <>
       <div id="stake-view">
         <Zoom in={true} onEntered={() => setZoomed(true)}>
-          <Paper className={`ohm-card`}>
+          <Paper className={`hec-card`}>
             <Grid container direction="column" spacing={2}>
               <Grid item>
                 <div className="card-header">
                   <Typography variant="h5">Single Stake v2 (3, 3)</Typography>
                   <RebaseTimer />
-
-                  {address && oldSohmBalance > 0.01 && (
-                    <Link
-                      className="migrate-sohm-button"
-                      style={{ textDecoration: "none" }}
-                      href="https://docs.hectordao.com/using-the-website/migrate"
-                      aria-label="migrate-sohm"
-                      target="_blank"
-                    >
-                      <NewReleases viewBox="0 0 24 24" />
-                      <Typography>Migrate sHEC!</Typography>
-                    </Link>
-                  )}
                 </div>
               </Grid>
 
@@ -304,7 +278,7 @@ function Stake() {
 
                       <Box className="stake-action-row " display="flex" alignItems="center">
                         {address && !isAllowanceDataLoading ? (
-                          (!hasAllowance("ohm") && view === 0) || (!hasAllowance("sohm") && view === 1) ? (
+                          (!hasAllowance("hec") && view === 0) || (!hasAllowance("shec") && view === 1) ? (
                             <Box className="help-text">
                               <Typography variant="body1" className="stake-note" color="textSecondary">
                                 {view === 0 ? (
@@ -323,7 +297,7 @@ function Stake() {
                               </Typography>
                             </Box>
                           ) : (
-                            <FormControl className="ohm-input" variant="outlined" color="primary">
+                            <FormControl className="hec-input" variant="outlined" color="primary">
                               <InputLabel htmlFor="amount-input"></InputLabel>
                               <OutlinedInput
                                 id="amount-input"
@@ -350,7 +324,7 @@ function Stake() {
                         <TabPanel value={view} index={0} className="stake-tab-panel">
                           {isAllowanceDataLoading ? (
                             <Skeleton />
-                          ) : address && hasAllowance("ohm") ? (
+                          ) : address && hasAllowance("hec") ? (
                             <Button
                               className="stake-button"
                               variant="contained"
@@ -369,7 +343,7 @@ function Stake() {
                               color="primary"
                               disabled={isPendingTxn(pendingTransactions, "approve_staking")}
                               onClick={() => {
-                                onSeekApproval("ohm");
+                                onSeekApproval("hec");
                               }}
                             >
                               {txnButtonText(pendingTransactions, "approve_staking", "Approve")}
@@ -379,7 +353,7 @@ function Stake() {
                         <TabPanel value={view} index={1} className="stake-tab-panel">
                           {isAllowanceDataLoading ? (
                             <Skeleton />
-                          ) : address && hasAllowance("sohm") ? (
+                          ) : address && hasAllowance("shec") ? (
                             <Button
                               className="stake-button"
                               variant="contained"
@@ -398,7 +372,7 @@ function Stake() {
                               color="primary"
                               disabled={isPendingTxn(pendingTransactions, "approve_unstaking")}
                               onClick={() => {
-                                onSeekApproval("sohm");
+                                onSeekApproval("shec");
                               }}
                             >
                               {txnButtonText(pendingTransactions, "approve_unstaking", "Approve")}
@@ -412,7 +386,7 @@ function Stake() {
                       <div className="data-row">
                         <Typography variant="body1">Your Balance</Typography>
                         <Typography variant="body1">
-                          {isAppLoading ? <Skeleton width="80px" /> : <>{trim(ohmBalance, 4)} HEC</>}
+                          {isAppLoading ? <Skeleton width="80px" /> : <>{trim(hecBalance, 4)} HEC</>}
                         </Typography>
                       </div>
 
@@ -451,10 +425,10 @@ function Stake() {
           </Paper>
         </Zoom>
       </div>
-      {address && oldshecBalance > 0 && (
+      {address && oldshecBalance > 0.0001 && (
         <div id="stake-view">
           <Zoom in={true} onEntered={() => setZoomed(true)}>
-            <Paper className={`ohm-card`}>
+            <Paper className={`hec-card`}>
               <Grid container direction="column" spacing={2}>
                 <Grid item>
                   <div className="card-header">
@@ -490,7 +464,7 @@ function Stake() {
                                 </Typography>
                               </Box>
                             ) : (
-                              <FormControl className="ohm-input" variant="outlined" color="primary">
+                              <FormControl className="hec-input" variant="outlined" color="primary">
                                 <InputLabel htmlFor="amount-input"></InputLabel>
                                 <OutlinedInput
                                   id="amount-old-input"

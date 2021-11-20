@@ -75,7 +75,7 @@ const commonSettings = {
     MuiPaper: {
       root: {
         backdropFilter: "blur(33px)",
-        "&.ohm-card": {
+        "&.hec-card": {
           padding: "20px 30px 30px 30px",
           borderRadius: "10px",
           maxWidth: "833px",
@@ -84,12 +84,12 @@ const commonSettings = {
           borderRadius: "10px",
           overflow: "hidden",
         },
-        "&.ohm-menu": {
+        "&.hec-menu": {
           padding: "22px 0px",
           borderRadius: "10px",
           margin: "0px",
         },
-        "&.ohm-chart-card": {
+        "&.hec-chart-card": {
           padding: "20px 0px",
           whiteSpace: "nowrap",
           maxWidth: "700px",

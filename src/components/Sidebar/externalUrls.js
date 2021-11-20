@@ -8,16 +8,6 @@ import { SvgIcon } from "@material-ui/core";
 import { AccountBalanceOutlined, MonetizationOnOutlined } from "@material-ui/icons";
 
 const externalUrls = [
-  // {
-  //   title: "Forum",
-  //   url: "https://forum.app.hectordao.com/",
-  //   icon: <SvgIcon color="primary" component={ForumIcon} />,
-  // },
-  // {
-  //   title: "Governance",
-  //   url: "https://vote.app.hectordao.com/",
-  //   icon: <SvgIcon color="primary" component={GovIcon} />,
-  // },
   {
     title: "Buy on SpookySwap",
     url: "https://spookyswap.finance/swap?inputCurrency=0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E&outputCurrency=0x5C4FDfc5233f935f20D2aDbA572F770c2E377Ab0",
@@ -53,11 +43,6 @@ const externalUrls = [
     url: "https://docs.hectordao.com",
     icon: <SvgIcon color="primary" component={DocsIcon} />,
   },
-  // {
-  //   title: "Feedback",
-  //   url: "https://olympusdao.canny.io/",
-  //   icon: <SvgIcon color="primary" component={FeedbackIcon} />,
-  // },
 ];
 
 export default externalUrls;

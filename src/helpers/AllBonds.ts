@@ -5,17 +5,17 @@ import { ReactComponent as DaiImg } from "src/assets/tokens/DAI.svg";
 import { ReactComponent as HecDaiimg } from "src/assets/tokens/HEC-DAI.svg";
 import { ReactComponent as wFTMImg } from "src/assets/tokens/wFTM.svg";
 import { ReactComponent as UsdcImg } from "src/assets/tokens/USDC.svg";
-import { ReactComponent as MimImg } from "src/assets/tokens/mim.svg";
+import { ReactComponent as MimImg } from "src/assets/tokens/MIM.svg";
 import { ReactComponent as HecUsdcImg } from "src/assets/tokens/HEC-USDC.svg";
 
-import { abi as BondOhmDaiContract } from "src/abi/bonds/OhmDaiContract.json";
+import { abi as BondHecDaiContract } from "src/abi/bonds/HecDaiContract.json";
 import { abi as HecUsdcContract } from "src/abi/bonds/HecUsdcContract.json";
 
 import { abi as DaiBondContract } from "src/abi/bonds/DaiContract.json";
-import { abi as ReserveOhmDaiContract } from "src/abi/reserves/OhmDai.json";
+import { abi as ReserveHecDaiContract } from "src/abi/reserves/HecDai.json";
 import { abi as ReserveHecUsdcContract } from "src/abi/reserves/HecUsdc.json";
 
-import { abi as EthBondContract } from "src/abi/bonds/EthContract.json";
+import { abi as EthBondContract } from "src/abi/bonds/FtmContract.json";
 
 import { abi as ierc20Abi } from "src/abi/IERC20.json";
 
@@ -63,9 +63,9 @@ export const ftm = new CustomBond({
     let ethPrice = await ethBondContract.assetPrice();
     ethPrice = ethPrice / Math.pow(10, 8);
     const token = this.getContractForReserve(networkID, provider);
-    let ethAmount = await token.balanceOf(addresses[networkID].TREASURY_ADDRESS);
-    ethAmount = ethAmount / Math.pow(10, 18);
-    return ethAmount * ethPrice;
+    let ftmAmount = await token.balanceOf(addresses[networkID].TREASURY_ADDRESS);
+    ftmAmount = ftmAmount / Math.pow(10, 18);
+    return ftmAmount * ethPrice;
   },
 });
 
@@ -110,8 +110,8 @@ export const hec_dai = new LPBond({
   displayName: "HEC-DAI LP v1",
   bondToken: "DAI",
   bondIconSvg: HecDaiimg,
-  bondContractABI: BondOhmDaiContract,
-  reserveContract: ReserveOhmDaiContract,
+  bondContractABI: BondHecDaiContract,
+  reserveContract: ReserveHecDaiContract,
   networkAddrs: {
     [NetworkID.Mainnet]: {
       bondAddress: "0xA1224c353cdCB03eB70FbA44dADC137F39E5EF7d",
@@ -131,8 +131,8 @@ export const hec_dai_v2 = new LPBond({
   displayName: "HEC-DAI LP v2",
   bondToken: "DAI",
   bondIconSvg: HecDaiimg,
-  bondContractABI: BondOhmDaiContract,
-  reserveContract: ReserveOhmDaiContract,
+  bondContractABI: BondHecDaiContract,
+  reserveContract: ReserveHecDaiContract,
   networkAddrs: {
     [NetworkID.Mainnet]: {
       bondAddress: "0x6c9b3a47a28a39fea65e99d97895e717df1706d0",
@@ -160,7 +160,6 @@ export const hec_usdc = new LPBond({
       reserveAddress: "0xd661952749f05acc40503404938a91af9ac1473b",
     },
     [NetworkID.Testnet]: {
-      // NOTE (appleseed-lusd): using ohm-dai rinkeby contracts
       bondAddress: "0xcF449dA417cC36009a1C6FbA78918c31594B9377",
       reserveAddress: "0x8D5a22Fb6A1840da602E56D1a260E56770e0bCE2",
     },

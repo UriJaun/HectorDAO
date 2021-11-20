@@ -1,8 +1,8 @@
 import { ethers } from "ethers";
 import { addresses } from "../constants";
-import { abi as OlympusStakingv2 } from "../abi/OlympusStakingv2.json";
+import { abi as HectorStakingv2 } from "../abi/HectorStakingv2.json";
 import { abi as ierc20Abi } from "../abi/IERC20.json";
-import { abi as sOHMv2 } from "../abi/sOhmv2.json";
+import { abi as sHECv2 } from "../abi/sHecv2.json";
 import { setAll, getTokenPrice, getMarketPrice } from "../helpers";
 import apollo from "../lib/apolloClient.js";
 import { createSlice, createSelector, createAsyncThunk } from "@reduxjs/toolkit";
@@ -53,16 +53,15 @@ export const loadAppDetails = createAsyncThunk(
 
     const stakingContract = new ethers.Contract(
       addresses[networkID].STAKING_ADDRESS as string,
-      OlympusStakingv2,
+      HectorStakingv2,
       provider,
     );
     const old_stakingContract = new ethers.Contract(
       addresses[networkID].OLD_STAKING_ADDRESS as string,
-      OlympusStakingv2,
+      HectorStakingv2,
       provider,
     );
     // NOTE (appleseed): marketPrice from Graph was delayed, so get CoinGecko price
-    // const marketPrice = parseFloat(graphData.data.protocolMetrics[0].ohmPrice);
     let marketPrice;
     try {
       const originalPromiseResult = await dispatch(
@@ -74,7 +73,7 @@ export const loadAppDetails = createAsyncThunk(
       console.error("Returned a null response from dispatch(loadMarketPrice)");
       return;
     }
-    const sHecMainContract = new ethers.Contract(addresses[networkID].SHEC_ADDRESS as string, sOHMv2, provider);
+    const sHecMainContract = new ethers.Contract(addresses[networkID].SHEC_ADDRESS as string, sHECv2, provider);
     const hecContract = new ethers.Contract(addresses[networkID].HEC_ADDRESS as string, ierc20Abi, provider);
     const oldsHecContract = new ethers.Contract(
       addresses[networkID].OLD_SHEC_ADDRESS as string,

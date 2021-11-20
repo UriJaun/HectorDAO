@@ -1,30 +1,25 @@
 import { ethers } from "ethers";
 import { addresses } from "../constants";
 import { abi as ierc20Abi } from "../abi/IERC20.json";
-import { abi as sOHMv2 } from "../abi/sOhmv2.json";
+import { abi as sHECv2 } from "../abi/sHecv2.json";
 import { setAll } from "../helpers";
 
 import { createAsyncThunk, createSelector, createSlice } from "@reduxjs/toolkit";
-import { Bond, NetworkID } from "src/lib/Bond"; // TODO: this type definition needs to move out of BOND.
 import { RootState } from "src/store";
 import { IBaseAddressAsyncThunk, ICalcUserBondDetailsAsyncThunk } from "./interfaces";
 
 export const getBalances = createAsyncThunk(
   "account/getBalances",
   async ({ address, networkID, provider }: IBaseAddressAsyncThunk) => {
-    const ohmContract = new ethers.Contract(addresses[networkID].HEC_ADDRESS as string, ierc20Abi, provider);
-    const hecBalance = await ohmContract.balanceOf(address);
-    const sohmContract = new ethers.Contract(addresses[networkID].SHEC_ADDRESS as string, ierc20Abi, provider);
-    const shecBalance = await sohmContract.balanceOf(address);
-    let poolBalance = 0;
-    const poolTokenContract = new ethers.Contract(addresses[networkID].PT_TOKEN_ADDRESS as string, ierc20Abi, provider);
-    poolBalance = await poolTokenContract.balanceOf(address);
+    const hecContract = new ethers.Contract(addresses[networkID].HEC_ADDRESS as string, ierc20Abi, provider);
+    const hecBalance = await hecContract.balanceOf(address);
+    const shecContract = new ethers.Contract(addresses[networkID].SHEC_ADDRESS as string, ierc20Abi, provider);
+    const shecBalance = await shecContract.balanceOf(address);
 
     return {
       balances: {
-        ohm: ethers.utils.formatUnits(hecBalance, "gwei"),
-        sohm: ethers.utils.formatUnits(shecBalance, "gwei"),
-        pool: ethers.utils.formatUnits(poolBalance, "gwei"),
+        hec: ethers.utils.formatUnits(hecBalance, "gwei"),
+        shec: ethers.utils.formatUnits(shecBalance, "gwei"),
       },
     };
   },
@@ -40,41 +35,36 @@ export const loadAccountDetails = createAsyncThunk(
     let unstakeAllowance = 0;
     let oldunstakeAllowance = 0;
     let daiBondAllowance = 0;
-    let poolAllowance = 0;
 
     const daiContract = new ethers.Contract(addresses[networkID].DAI_ADDRESS as string, ierc20Abi, provider);
     const daiBalance = await daiContract.balanceOf(address);
 
-    const ohmContract = new ethers.Contract(addresses[networkID].HEC_ADDRESS as string, ierc20Abi, provider);
-    hecBalance = await ohmContract.balanceOf(address);
-    stakeAllowance = await ohmContract.allowance(address, addresses[networkID].STAKING_HELPER_ADDRESS);
+    const hecContract = new ethers.Contract(addresses[networkID].HEC_ADDRESS as string, ierc20Abi, provider);
+    hecBalance = await hecContract.balanceOf(address);
+    stakeAllowance = await hecContract.allowance(address, addresses[networkID].STAKING_HELPER_ADDRESS);
 
-    const sohmContract = new ethers.Contract(addresses[networkID].SHEC_ADDRESS as string, sOHMv2, provider);
-    shecBalance = await sohmContract.balanceOf(address);
-    unstakeAllowance = await sohmContract.allowance(address, addresses[networkID].STAKING_ADDRESS);
-    poolAllowance = await sohmContract.allowance(address, addresses[networkID].PT_PRIZE_POOL_ADDRESS);
+    const shecContract = new ethers.Contract(addresses[networkID].SHEC_ADDRESS as string, sHECv2, provider);
+    shecBalance = await shecContract.balanceOf(address);
+    unstakeAllowance = await shecContract.allowance(address, addresses[networkID].STAKING_ADDRESS);
 
-    const oldshecContract = new ethers.Contract(addresses[networkID].OLD_SHEC_ADDRESS as string, sOHMv2, provider);
+    const oldshecContract = new ethers.Contract(addresses[networkID].OLD_SHEC_ADDRESS as string, sHECv2, provider);
     oldshecBalance = await oldshecContract.balanceOf(address);
     oldunstakeAllowance = await oldshecContract.allowance(address, addresses[networkID].OLD_STAKING_ADDRESS);
 
     return {
       balances: {
         dai: ethers.utils.formatEther(daiBalance),
-        ohm: ethers.utils.formatUnits(hecBalance, "gwei"),
-        sohm: ethers.utils.formatUnits(shecBalance, "gwei"),
+        hec: ethers.utils.formatUnits(hecBalance, "gwei"),
+        shec: ethers.utils.formatUnits(shecBalance, "gwei"),
         oldshec: ethers.utils.formatUnits(oldshecBalance, "gwei"),
       },
       staking: {
-        ohmStake: +stakeAllowance,
-        ohmUnstake: +unstakeAllowance,
+        hecStake: +stakeAllowance,
+        hecUnstake: +unstakeAllowance,
         oldhecUnstake: +oldunstakeAllowance,
       },
       bonding: {
         daiAllowance: daiBondAllowance,
-      },
-      pooling: {
-        sohmPool: +poolAllowance,
       },
     };
   },
@@ -144,17 +134,17 @@ export const calculateUserBondDetails = createAsyncThunk(
 interface IAccountSlice {
   bonds: { [key: string]: IUserBondDetails };
   balances: {
-    ohm: string;
-    sohm: string;
+    hec: string;
+    shec: string;
     dai: string;
-    oldsohm: string;
+    oldshec: string;
   };
   loading: boolean;
 }
 const initialState: IAccountSlice = {
   loading: false,
   bonds: {},
-  balances: { ohm: "", sohm: "", dai: "", oldsohm: "" },
+  balances: { hec: "", shec: "", dai: "", oldshec: "" },
 };
 
 const accountSlice = createSlice({

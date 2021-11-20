@@ -17,7 +17,7 @@
 	background: linear-gradient(2.46deg, #FFE0B3 -9.31%, rgba(255, 240, 217, 0) 102.37%), #FFFFFF;
 }
 
-.app.light .MuiPaper-root.ohm-card {
+.app.light .MuiPaper-root.hec-card {
 	background: -o-linear-gradient(top, #FFF3E1 0%, #FFDFAD 100%);
 	background: -webkit-gradient(linear, left top, left bottom, from(#FFF3E1), to(#FFDFAD));
 	background: linear-gradient(180deg, #FFF3E1 0%, #FFDFAD 100%);
@@ -26,7 +26,7 @@
 	box-shadow: inset -9px -12px 25px -3px rgba(255, 255, 255, 0.24);
 	border-radius: 10px;
 }
-.app.light #choose-bond-view .ohm-card .bond-hero h4 {
+.app.light #choose-bond-view .hec-card .bond-hero h4 {
  color: #222;
 }
 .app.light .stake-wallet-notification .wallet-menu .connect-button {
@@ -97,7 +97,7 @@
 	fill: #FF9900;
 }
 
-.app.light #ohm-menu-button {
+.app.light #hec-menu-button {
 	border: 1px solid #FF9900;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
@@ -200,7 +200,7 @@
 	color: #161616;
 }
 
-.app.light #bond-view .MuiBackdrop-root .ohm-card {
+.app.light #bond-view .MuiBackdrop-root .hec-card {
 	background: #FFF5E6;
 	border: 1px solid #000000;
 }
@@ -261,7 +261,7 @@
 	border-radius: 10px;
 }
 
-.app.dark .MuiPaper-root.ohm-card {
+.app.dark .MuiPaper-root.hec-card {
 	background: #0C0C0C;
 	border: 1px solid #FF9900;
 	-webkit-box-sizing: border-box;
@@ -325,7 +325,7 @@
 	color: #FF9900;
 }
 
-.app.dark #treasury-dashboard-view .hero-metrics .ohm-card h5 {
+.app.dark #treasury-dashboard-view .hero-metrics .hec-card h5 {
 	color: #FF9900;
 }
 
@@ -366,14 +366,14 @@
 	fill: #FF9900;
 }
 
-.app.dark #ohm-menu-button {
+.app.dark #hec-menu-button {
 	border: 1px solid #FF9900;
 	-webkit-box-sizing: border-box;
 	box-sizing: border-box;
 	border-radius: 5px;
 	background: #0C0C0C;
 }
-.app.dark #ohm-menu-button:hover path{
+.app.dark #hec-menu-button:hover path{
 	fill: #fff;
 }
 
@@ -445,7 +445,7 @@
 	background: #FF9900;
 }
 
-.app.dark #hades .ohm-popover h3 {
+.app.dark #hades .hec-popover h3 {
 	color: #fff;
 }
 
@@ -488,7 +488,7 @@
 	color: #FF9900;
 }
 
-.app.dark #bond-view .MuiBackdrop-root .ohm-card {
+.app.dark #bond-view .MuiBackdrop-root .hec-card {
 	background: #000;
 	-webkit-box-sizing: border-box;
 	        box-sizing: border-box;
@@ -529,7 +529,7 @@
 }
 
 
-.app.dark #choose-bond-view .ohm-card .bond-hero h4 {
+.app.dark #choose-bond-view .hec-card .bond-hero h4 {
 	color: #FF9900;
 	font-weight: 400 !important;
 }

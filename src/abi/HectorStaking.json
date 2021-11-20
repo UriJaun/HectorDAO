@@ -21,7 +21,7 @@
     },
     {
       "inputs": [
-        { "internalType": "address", "name": "ohmTokenAddress_", "type": "address" },
+        { "internalType": "address", "name": "hecTokenAddress_", "type": "address" },
         { "internalType": "address", "name": "sHEC_", "type": "address" },
         { "internalType": "uint8", "name": "epochLengthInBlocks_", "type": "uint8" }
       ],
@@ -32,14 +32,14 @@
     },
     {
       "inputs": [],
-      "name": "ohm",
+      "name": "hec",
       "outputs": [{ "internalType": "address", "name": "", "type": "address" }],
       "stateMutability": "view",
       "type": "function"
     },
     {
       "inputs": [],
-      "name": "ohmToDistributeNextEpoch",
+      "name": "hecToDistributeNextEpoch",
       "outputs": [{ "internalType": "uint256", "name": "", "type": "uint256" }],
       "stateMutability": "view",
       "type": "function"
