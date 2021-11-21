@@ -81,9 +81,7 @@ export const loadAppDetails = createAsyncThunk(
       provider,
     );
     const old_circ = await oldsHecContract.circulatingSupply();
-    const hecBalance = await hecContract.balanceOf(addresses[networkID].STAKING_ADDRESS);
-    const old_hecBalance = await hecContract.balanceOf(addresses[networkID].OLD_STAKING_ADDRESS);
-    const stakingTVL = (hecBalance * marketPrice) / 1000000000 + (old_hecBalance * marketPrice) / 1000000000;
+    const stakingTVL = parseFloat(graphData.data.protocolMetrics[0].totalValueLocked);
     const circ = await sHecMainContract.circulatingSupply();
     const circSupply = parseFloat(graphData.data.protocolMetrics[0].ohmCirculatingSupply);
     const total = await hecContract.totalSupply();
