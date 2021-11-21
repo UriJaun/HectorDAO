@@ -21,6 +21,8 @@ query {
     treasuryUsdcMarketValue
     treasuryUsdcRiskFreeValue
     treasuryWFTMMarketValue
+    treasuryMIMRiskFreeValue
+    treasuryMIMMarketValue
     currentAPY
     runway10k
     runway20k
@@ -145,7 +147,7 @@ export const bulletpoints = {
 
 export const tooltipItems = {
   tvl: ["Total Value Deposited"],
-  coin: ["DAI", "USDC", "WFTM"],
+  coin: ["DAI", "USDC", "MiM", "WFTM"],
   holder: ["OHMies"],
   apy: ["APY"],
   runway: ["Days"],
