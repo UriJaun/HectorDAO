@@ -203,11 +203,17 @@ function TreasuryDashboard() {
                 <Chart
                   type="stack"
                   data={data}
-                  dataKey={["treasuryDaiMarketValue", "treasuryUsdcMarketValue", "treasuryWFTMMarketValue"]}
+                  dataKey={[
+                    "treasuryDaiMarketValue",
+                    "treasuryUsdcMarketValue",
+                    "treasuryMIMMarketValue",
+                    "treasuryWFTMMarketValue",
+                  ]}
                   stopColor={[
                     ["#F5AC37", "#EA9276"],
                     ["#768299", "#98B3E9"],
                     ["#DC30EB", "#EA98F1"],
+                    ["#8BFF4D", "#4C8C2A"],
                   ]}
                   headerText="Market Value of Treasury Assets"
                   headerSubText={`${data && formatCurrency(data[0].treasuryMarketValue)}`}
@@ -226,10 +232,11 @@ function TreasuryDashboard() {
                   type="stack"
                   data={data}
                   format="currency"
-                  dataKey={["treasuryDaiRiskFreeValue", "treasuryUsdcRiskFreeValue"]}
+                  dataKey={["treasuryDaiRiskFreeValue", "treasuryUsdcRiskFreeValue", "treasuryMIMRiskFreeValue"]}
                   stopColor={[
                     ["#F5AC37", "#EA9276"],
                     ["#768299", "#98B3E9"],
+                    ["#ff758f", "#c9184a"],
                     ["#000", "#fff"],
                     ["#000", "#fff"],
                   ]}
