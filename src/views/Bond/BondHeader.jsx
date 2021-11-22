@@ -25,7 +25,7 @@ function BondHeader({ bond, slippage, recipientAddress, onRecipientAddressChange
     else history.push("/bonds");
   });
   let displayName = bond.displayName;
-  if (bond.name == "mim") {
+  if (bond.isFour) {
     displayName += " (4, 4)";
   }
 

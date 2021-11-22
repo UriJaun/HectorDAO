@@ -140,7 +140,7 @@ function BondPurchase({ bond, slippage, recipientAddress }) {
   }
   let reward;
   let displayName;
-  if (bond.name == "mim") {
+  if (bond.isFour) {
     reward = "sHEC";
     displayName = bond.displayName + " (4, 4)";
   } else {

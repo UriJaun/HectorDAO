@@ -33,6 +33,9 @@ interface BondOpts {
   bondContractABI: ethers.ContractInterface; // ABI for contract
   networkAddrs: NetworkAddresses; // Mapping of network --> Addresses
   bondToken: string; // Unused, but native token to buy the bond.
+  isFour?: Boolean;
+  isTotal?: Boolean;
+  decimals?: number;
 }
 
 // Technically only exporting for the interface
@@ -45,6 +48,9 @@ export abstract class Bond {
   readonly bondContractABI: ethers.ContractInterface; // Bond ABI
   readonly networkAddrs: NetworkAddresses;
   readonly bondToken: string;
+  readonly isFour?: Boolean;
+  readonly isTotal?: Boolean;
+  readonly decimals?: number;
 
   // The following two fields will differ on how they are set depending on bond type
   abstract isLP: Boolean;
@@ -62,6 +68,9 @@ export abstract class Bond {
     this.bondContractABI = bondOpts.bondContractABI;
     this.networkAddrs = bondOpts.networkAddrs;
     this.bondToken = bondOpts.bondToken;
+    this.isFour = bondOpts.isFour;
+    this.isTotal = bondOpts.isTotal;
+    this.decimals = bondOpts.decimals;
   }
 
   getAddressForBond(networkID: NetworkID) {
@@ -137,22 +146,30 @@ export class StableBond extends Bond {
   readonly isLP = false;
   readonly reserveContract: ethers.ContractInterface;
   readonly displayUnits: string;
+  readonly isTotal?: Boolean;
 
   constructor(stableBondOpts: StableBondOpts) {
     super(BondType.StableAsset, stableBondOpts);
     // For stable bonds the display units are the same as the actual token
     this.displayUnits = stableBondOpts.displayName;
     this.reserveContract = ierc20Abi; // The Standard ierc20Abi since they're normal tokens
+    this.isTotal = stableBondOpts.isTotal;
   }
 
   async getTreasuryBalance(networkID: NetworkID, provider: StaticJsonRpcProvider) {
     let token = this.getContractForReserve(networkID, provider);
     let tokenAmount = await token.balanceOf(addresses[networkID].TREASURY_ADDRESS);
     let decimals = 18;
-    if (this.name == "usdc") {
-      decimals = 6;
+    if (this.decimals) {
+      decimals = this.decimals;
     }
-    return tokenAmount / Math.pow(10, decimals);
+    let treasuryBalane;
+    treasuryBalane = tokenAmount / Math.pow(10, decimals);
+    if (this.isTotal) {
+      let bond = this.getContractForBond(networkID, provider);
+      treasuryBalane = (await bond.totalPrinciple()) / Math.pow(10, decimals);
+    }
+    return treasuryBalane;
   }
 }
 

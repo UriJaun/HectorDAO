@@ -21,7 +21,10 @@ export function ClaimBondTableData({ userBond }) {
 
   const bond = userBond[1];
   const bondName = bond.bond;
-
+  let displayName = bond.displayName;
+  if (bond.isFour) {
+    displayName += " (4, 4)";
+  }
   const isAppLoading = useSelector(state => state.app.loading ?? true);
 
   const currentBlock = useSelector(state => {
@@ -38,7 +41,7 @@ export function ClaimBondTableData({ userBond }) {
 
   async function onRedeem({ autostake }) {
     let currentBond = bonds.find(bnd => bnd.name === bondName);
-    if (currentBond.name == "mim" && vestingPeriod() !== "Fully Vested") {
+    if (currentbond.isFour && vestingPeriod() !== "Fully Vested") {
       dispatch(info("4,4 bonds can only be claimed after they are fully vested."));
     } else {
       await dispatch(redeemBond({ address, bond: currentBond, networkID: chainID, provider, autostake }));
@@ -50,9 +53,7 @@ export function ClaimBondTableData({ userBond }) {
       <TableCell align="left" className="bond-name-cell">
         <BondLogo bond={bond} />
         <div className="bond-name">
-          <Typography variant="body1">
-            {bond.displayName ? trim(bond.displayName, 4) : <Skeleton width={100} />}
-          </Typography>
+          <Typography variant="body1">{displayName ? trim(displayName, 4) : <Skeleton width={100} />}</Typography>
         </div>
       </TableCell>
       <TableCell align="center">

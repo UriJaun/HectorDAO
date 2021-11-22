@@ -12,6 +12,7 @@ import { abi as BondHecDaiContract } from "src/abi/bonds/HecDaiContract.json";
 import { abi as HecUsdcContract } from "src/abi/bonds/HecUsdcContract.json";
 
 import { abi as DaiBondContract } from "src/abi/bonds/DaiContract.json";
+import { abi as MimBondContract } from "src/abi/bonds/MimContract.json";
 import { abi as ReserveHecDaiContract } from "src/abi/reserves/HecDai.json";
 import { abi as ReserveHecUsdcContract } from "src/abi/reserves/HecUsdc.json";
 
@@ -39,6 +40,25 @@ export const dai = new StableBond({
   },
 });
 
+export const dai4 = new StableBond({
+  name: "dai4",
+  displayName: "DAI",
+  bondToken: "DAI",
+  bondIconSvg: DaiImg,
+  isFour: true,
+  isTotal: true,
+  bondContractABI: MimBondContract,
+  networkAddrs: {
+    [NetworkID.Mainnet]: {
+      bondAddress: "0xe8fd4630800bA4335801D1b104B07328Ae415605",
+      reserveAddress: "0x8D11eC38a3EB5E956B052f67Da8Bdc9bef8Abf3E",
+    },
+    [NetworkID.Testnet]: {
+      bondAddress: "0xDea5668E815dAF058e3ecB30F645b04ad26374Cf",
+      reserveAddress: "0xB2180448f8945C8Cc8AE9809E67D6bd27d8B2f2C",
+    },
+  },
+});
 export const ftm = new CustomBond({
   name: "ftm",
   displayName: "wFTM",
@@ -73,6 +93,7 @@ export const usdc = new StableBond({
   name: "usdc",
   displayName: "USDC",
   bondToken: "USDC",
+  decimals: 6,
   bondIconSvg: UsdcImg,
   bondContractABI: DaiBondContract,
   networkAddrs: {
@@ -87,12 +108,34 @@ export const usdc = new StableBond({
   },
 });
 
-export const mim = new StableBond({
-  name: "mim",
+export const usdc4 = new StableBond({
+  name: "usdc4",
+  displayName: "USDC",
+  bondToken: "USDC",
+  bondIconSvg: UsdcImg,
+  bondContractABI: MimBondContract,
+  isFour: true,
+  decimals: 6,
+  isTotal: true,
+  networkAddrs: {
+    [NetworkID.Mainnet]: {
+      bondAddress: "0x605c31dD24c71f0b732Ef33aC12CDce77fAC09B6",
+      reserveAddress: "0x04068da6c83afcfa0e13ba15a6696662335d5b75",
+    },
+    [NetworkID.Testnet]: {
+      bondAddress: "0xF651283543fB9D61A91f318b78385d187D300738",
+      reserveAddress: "0x2F7249cb599139e560f0c81c269Ab9b04799E453",
+    },
+  },
+});
+
+export const mim4 = new StableBond({
+  name: "mim4",
   displayName: "MIM",
   bondToken: "MIM",
   bondIconSvg: MimImg,
   bondContractABI: DaiBondContract,
+  isFour: true,
   networkAddrs: {
     [NetworkID.Mainnet]: {
       bondAddress: "0xb26be27f6f980efb07ae757d0a6a372671eacf7f",
@@ -105,6 +148,24 @@ export const mim = new StableBond({
   },
 });
 
+export const mim = new StableBond({
+  name: "mim",
+  displayName: "MIM",
+  bondToken: "MIM",
+  bondIconSvg: MimImg,
+  bondContractABI: MimBondContract,
+  isTotal: true,
+  networkAddrs: {
+    [NetworkID.Mainnet]: {
+      bondAddress: "0xa695750b8439AB2AfBd88310946C99747C5B3A2E",
+      reserveAddress: "0x82f0B8B456c1A451378467398982d4834b6829c1",
+    },
+    [NetworkID.Testnet]: {
+      bondAddress: "0xF651283543fB9D61A91f318b78385d187D300738",
+      reserveAddress: "0x2F7249cb599139e560f0c81c269Ab9b04799E453",
+    },
+  },
+});
 export const hec_dai = new LPBond({
   name: "hec_dai_lp_v1",
   displayName: "HEC-DAI LP v1",
@@ -151,6 +212,7 @@ export const hec_usdc = new LPBond({
   name: "hec_usdc_lp",
   displayName: "HEC-USDC LP",
   bondToken: "USDC",
+  decimals: 6,
   bondIconSvg: HecUsdcImg,
   bondContractABI: HecUsdcContract,
   reserveContract: ReserveHecUsdcContract,
@@ -172,7 +234,7 @@ export const hec_usdc = new LPBond({
 // Is it a stableCoin bond? use `new StableBond`
 // Is it an LP Bond? use `new LPBond`
 // Add new bonds to this array!!
-export const allBonds = [hec_dai_v2, hec_usdc, ftm, dai, usdc, mim];
+export const allBonds = [hec_dai_v2, hec_usdc, ftm, dai, usdc, mim4, mim, usdc4, dai4];
 export const allBondsMap = allBonds.reduce((prevVal, bond) => {
   return { ...prevVal, [bond.name]: bond };
 }, {});

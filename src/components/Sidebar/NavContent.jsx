@@ -112,7 +112,7 @@ function NavContent() {
                         <Skeleton variant="text" width={"150px"} />
                       ) : (
                         <Typography variant="body2">
-                          {bond.name == "mim" ? bond.displayName + " (4, 4)" : bond.displayName}
+                          {bond.isFour ? bond.displayName + " (4, 4)" : bond.displayName}
                           <span className="bond-pair-roi">
                             {bond.isSoldOut ? (
                               "Sold Out"

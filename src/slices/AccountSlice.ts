@@ -85,6 +85,7 @@ export const calculateUserBondDetails = createAsyncThunk(
         displayName: "",
         bondIconSvg: "",
         isLP: false,
+        isFour: false,
         allowance: 0,
         balance: "0",
         interestDue: 0,
@@ -113,8 +114,8 @@ export const calculateUserBondDetails = createAsyncThunk(
     // let balanceVal = ethers.utils.formatEther(balance);
     // balanceVal should NOT be converted to a number. it loses decimal precision
     let deciamls = 18;
-    if (bond.name == "usdc") {
-      deciamls = 6;
+    if (bond.decimals) {
+      deciamls = bond.decimals;
     }
     const balanceVal = balance / Math.pow(10, deciamls);
     return {
@@ -122,6 +123,7 @@ export const calculateUserBondDetails = createAsyncThunk(
       displayName: bond.displayName,
       bondIconSvg: bond.bondIconSvg,
       isLP: bond.isLP,
+      isFour: bond.isFour,
       allowance: Number(allowance),
       balance: balanceVal.toString(),
       interestDue,

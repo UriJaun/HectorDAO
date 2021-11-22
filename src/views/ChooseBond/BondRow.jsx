@@ -15,7 +15,7 @@ export function BondDataCard({ bond }) {
   const btnVarient = isSoldOut ? "contained" : "outlined";
   let displayName = bond.displayName;
   let isFour = false;
-  if (bond.name == "mim") {
+  if (bond.isFour) {
     displayName += " (4, 4)";
     isFour = true;
   }
@@ -104,7 +104,7 @@ export function BondTableData({ bond }) {
   const btnVarient = isSoldOut ? "contained" : "outlined";
   let displayName = bond.displayName;
   let isFour = false;
-  if (bond.name == "mim") {
+  if (bond.isFour) {
     displayName += " (4, 4)";
     isFour = true;
   }

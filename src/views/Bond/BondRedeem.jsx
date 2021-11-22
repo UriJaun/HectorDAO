@@ -49,7 +49,7 @@ function BondRedeem({ bond }) {
 
   let isFour = false;
   let reward = "HEC";
-  if (bond.name == "mim") {
+  if (bond.isFour) {
     isFour = true;
     reward = "sHEC";
   }
