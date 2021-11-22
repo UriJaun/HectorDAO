@@ -6,16 +6,16 @@ query {
   protocolMetrics(first: 1000, orderBy: timestamp, orderDirection: desc) {
     id
     timestamp
-    ohmCirculatingSupply
-    sOhmCirculatingSupply
+    hecCirculatingSupply
+    sHecCirculatingSupply
     totalSupply
-    ohmPrice
+    hecPrice
     marketCap
     totalValueLocked
     treasuryRiskFreeValue
     treasuryMarketValue
     nextEpochRebase
-    nextDistributedOhm
+    nextDistributedHec
     treasuryDaiMarketValue
     treasuryDaiRiskFreeValue
     treasuryUsdcMarketValue
@@ -24,13 +24,9 @@ query {
     treasuryMIMRiskFreeValue
     treasuryMIMMarketValue
     currentAPY
-    runway10k
-    runway20k
-    runway50k
     runwayCurrent
-    holders
-    treasuryOhmDaiPOL
-    treasuryOhmUsdcPOL
+    treasuryHecDaiPOL
+    treasuryHecUsdcPOL
   }
 }
 `;
@@ -148,7 +144,6 @@ export const bulletpoints = {
 export const tooltipItems = {
   tvl: ["Total Value Deposited"],
   coin: ["DAI", "USDC", "MiM", "WFTM"],
-  holder: ["OHMies"],
   apy: ["APY"],
   runway: ["Days"],
   pol: ["SLP Treasury", "Market SLP"],
@@ -159,7 +154,6 @@ export const tooltipInfoMessages = {
   mvt: "Market Value of Treasury Assets, is the sum of the value (in dollars) of all assets held by the treasury.",
   rfv: "Risk Free Value, is the amount of funds the treasury guarantees to use for backing HEC.",
   pol: "Protocol Owned Liquidity, is the amount of LP the treasury owns and controls. The more POL the better for the protocol and its users.",
-  holder: "Holders, represents the total number of Hectors (sHEC holders)",
   staked: "HEC Staked, is the ratio of sHEC to HEC (staked vs unstaked)",
   apy: "Annual Percentage Yield, is the normalized representation of an interest rate, based on a compounding period over one year. Note that APYs provided are rather ballpark level indicators and not so much precise future results.",
   runway: "Runway, is the number of days sHEC emissions can be sustained at a given rate. Lower APY = longer runway",

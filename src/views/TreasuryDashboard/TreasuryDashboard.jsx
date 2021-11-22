@@ -71,7 +71,7 @@ function TreasuryDashboard() {
       setData(metrics);
 
       let staked = r.data.protocolMetrics.map(entry => ({
-        staked: (parseFloat(entry.sOhmCirculatingSupply) / parseFloat(entry.ohmCirculatingSupply)) * 100,
+        staked: (parseFloat(entry.sHecCirculatingSupply) / parseFloat(entry.hecCirculatingSupply)) * 100,
         timestamp: entry.timestamp,
       }));
       staked = staked.filter(pm => pm.staked < 100);
@@ -256,10 +256,10 @@ function TreasuryDashboard() {
                 <Chart
                   type="area"
                   data={data}
-                  dataKey={["treasuryOhmDaiPOL"]}
+                  dataKey={["treasuryHecDaiPOL"]}
                   stopColor={[["rgba(128, 204, 131, 1)", "rgba(128, 204, 131, 0)"]]}
                   headerText="Protocol Owned Liquidity HEC-DAI"
-                  headerSubText={`${data && trim(data[0].treasuryOhmDaiPOL, 2)}% `}
+                  headerSubText={`${data && trim(data[0].treasuryHecDaiPOL, 2)}% `}
                   dataFormat="percent"
                   bulletpointColors={bulletpoints.pol}
                   itemNames={tooltipItems.pol}

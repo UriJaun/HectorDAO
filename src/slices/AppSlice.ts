@@ -32,15 +32,15 @@ export const loadAppDetails = createAsyncThunk(
     }
     protocolMetrics(first: 1, orderBy: timestamp, orderDirection: desc) {
       timestamp
-      ohmCirculatingSupply
-      sOhmCirculatingSupply
+      hecCirculatingSupply
+      sHecCirculatingSupply
       totalSupply
-      ohmPrice
+      hecPrice
       marketCap
       totalValueLocked
       treasuryMarketValue
       nextEpochRebase
-      nextDistributedOhm
+      nextDistributedHec
     }
   }
   `;
@@ -83,11 +83,10 @@ export const loadAppDetails = createAsyncThunk(
     const old_circ = await oldsHecContract.circulatingSupply();
     const stakingTVL = parseFloat(graphData.data.protocolMetrics[0].totalValueLocked);
     const circ = await sHecMainContract.circulatingSupply();
-    const circSupply = parseFloat(graphData.data.protocolMetrics[0].ohmCirculatingSupply);
+    const circSupply = parseFloat(graphData.data.protocolMetrics[0].hecCirculatingSupply);
     const total = await hecContract.totalSupply();
     const totalSupply = total / 1000000000;
     const marketCap = marketPrice * circSupply;
-    const treasuryMarketValue = parseFloat(graphData.data.protocolMetrics[0].treasuryMarketValue);
     if (!provider) {
       console.error("failed to connect to provider, please connect your wallet");
       return {
@@ -96,7 +95,6 @@ export const loadAppDetails = createAsyncThunk(
         marketCap,
         circSupply,
         totalSupply,
-        treasuryMarketValue,
       };
     }
     const currentBlock = await provider.getBlockNumber();
@@ -128,7 +126,6 @@ export const loadAppDetails = createAsyncThunk(
       marketPrice,
       circSupply,
       totalSupply,
-      treasuryMarketValue,
       endBlock,
     } as IAppData;
   },
@@ -174,8 +171,8 @@ export const findOrLoadMarketPrice = createAsyncThunk(
 );
 
 /**
- * - fetches the OHM price from CoinGecko (via getTokenPrice)
- * - falls back to fetch marketPrice from ohm-dai contract
+ * - fetches the HEC price from CoinGecko (via getTokenPrice)
+ * - falls back to fetch marketPrice from hec-dai contract
  * - updates the App.slice when it runs
  */
 const loadMarketPrice = createAsyncThunk("app/loadMarketPrice", async ({ networkID, provider }: IBaseAsyncThunk) => {
